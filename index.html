@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise ERP vs DJP VAT Reconciliation System</title>
+    <title>Enterprise Dual Side ERP vs DJP VAT Reconciliation</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,22 +12,19 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            950: '#030712'
+                            50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9',
+                            600: '#0284c7', 700: '#0369a1', 950: '#030712'
                         }
                     }
                 }
             }
         }
     </script>
-    <!-- SheetJS (XLSX.js) & PapaParse & FileSaver.js for high performance file handling -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- SheetJS with Styling Support (xlsx-js-style) for Premium Excel Output -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+    <!-- PapaParse for High-Speed CSV Handling -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
     <!-- Google Fonts (Inter & Mono) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,26 +37,16 @@
             font-family: 'Inter', sans-serif;
             background: radial-gradient(circle at 50% 0%, #0f172a, #030712);
         }
-        .mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-        /* Custom premium scrollbars */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.5);
-        }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
         ::-webkit-scrollbar-thumb {
             background: rgba(148, 163, 184, 0.15);
             border-radius: 9999px;
             border: 2px solid rgba(15, 23, 42, 0.5);
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(148, 163, 184, 0.3);
-        }
-        /* Premium glassmorphism effects */
+        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.3); }
+        
         .glass-panel {
             background: rgba(15, 23, 42, 0.45);
             backdrop-filter: blur(16px);
@@ -70,563 +57,238 @@
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.03);
         }
-        /* Status Color Codes */
-        .status-badge-match {
-            background-color: rgba(16, 185, 129, 0.1);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-        .status-badge-selisih {
-            background-color: rgba(239, 68, 68, 0.1);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-        .status-badge-duplicate {
-            background-color: rgba(245, 158, 11, 0.1);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.2);
-        }
-        .status-badge-missing {
-            background-color: rgba(156, 163, 175, 0.1);
-            color: #d1d5db;
-            border: 1px solid rgba(156, 163, 175, 0.2);
-        }
+        
+        /* Status Badges */
+        .status-match { background-color: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .status-selisih { background-color: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .status-duplicate { background-color: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
+        .status-missing { background-color: rgba(156, 163, 175, 0.1); color: #d1d5db; border: 1px solid rgba(156, 163, 175, 0.2); }
+        .status-retur { background-color: rgba(139, 92, 246, 0.1); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.2); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
 
-    <!-- HEADER UTAMA -->
+    <!-- HEADER -->
     <header class="glass-panel sticky top-0 z-40 border-b border-slate-800/60 px-6 py-4">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-brand-500/10">
-                    <i class="fa-solid fa-file-invoice-dollar text-white text-lg"></i>
+                    <i class="fa-solid fa-code-compare text-white text-lg"></i>
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">VAT Reconciliation System</h1>
-                        <span class="px-2 py-0.5 text-[10px] font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20 rounded-full uppercase tracking-wider">Enterprise Sandbox</span>
+                        <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">Dual-Side Tax Audit Engine</h1>
+                        <span class="px-2 py-0.5 text-[10px] font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20 rounded-full uppercase tracking-wider">Zero Data Loss</span>
                     </div>
-                    <p class="text-xs text-slate-400">Pencocokan PPN Otomatis Menggunakan 8 Digit Terakhir Nomor Seri Faktur Pajak (NSFP)</p>
+                    <p class="text-xs text-slate-400">Pencocokan Faktur Pajak Berbasis 8-Digit Terakhir. Menambahkan VLOOKUP Tanpa Merusak Data Asli.</p>
                 </div>
             </div>
             
             <div class="flex flex-wrap items-center gap-3">
-                <!-- Tombol Load Dummy Data -->
                 <button id="btnLoadDummy" class="px-4 py-2 text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all rounded-lg flex items-center gap-2">
-                    <i class="fa-solid fa-database animate-pulse"></i>
-                    Muat 5.000+ Baris Data Demo (Audit Ready)
+                    <i class="fa-solid fa-database animate-pulse"></i> Muat 5.000+ Baris Demo
                 </button>
-                <div class="h-6 w-px bg-slate-800 hidden sm:block"></div>
-                <!-- Indikator Keamanan Sisi Klien -->
                 <div class="flex items-center gap-2 bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-lg">
                     <span class="flex h-2 w-2 relative">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                     </span>
-                    <span class="text-[11px] text-slate-400 font-medium">100% Client-Side Sandbox (Sangat Aman)</span>
+                    <span class="text-[11px] text-slate-400 font-medium">100% Client-Side Sandbox</span>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- NAVIGATION TABS -->
-    <div class="border-b border-slate-900 bg-slate-950/80 sticky top-[73px] z-30 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-6 flex gap-4">
-            <button id="tabRecon" class="py-3.5 px-2 border-b-2 border-brand-500 text-xs font-bold text-white transition-all flex items-center gap-2">
-                <i class="fa-solid fa-scale-unbalanced text-brand-400"></i>
-                Rekonsiliasi PPN Utama
-            </button>
-            <button id="tabConverter" class="py-3.5 px-2 border-b-2 border-transparent text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-2">
-                <i class="fa-solid fa-file-csv text-slate-400"></i>
-                Excel ke CSV Converter
-                <span class="px-1.5 py-0.2 bg-brand-500/10 text-brand-400 border border-brand-500/20 rounded text-[9px]">Mitigasi Berkas Raksasa</span>
-            </button>
-        </div>
-    </div>
-
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
 
-        <!-- NOTIFIKASI CONTAINER -->
         <div id="notificationArea" class="hidden transform transition-all duration-300"></div>
 
-        <!-- ================= TAB 1: REKONSILIASI UTAMA ================= -->
-        <div id="viewReconciliation" class="space-y-6">
-            
-            <!-- INFORMASI ALUR AUDIT -->
-            <div class="glass-panel p-4 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div class="flex items-start gap-3">
-                    <div class="p-2 bg-brand-500/10 text-brand-400 rounded-lg">
-                        <i class="fa-solid fa-circle-info text-lg"></i>
+        <!-- AREA 1: FILE UPLOAD -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- ERP File -->
+            <div id="dropzoneERP" class="glass-panel p-6 rounded-2xl border-2 border-dashed border-slate-800 hover:border-brand-500/50 transition-all duration-300 relative group">
+                <input type="file" id="fileERP" accept=".xlsx, .xls, .csv" class="hidden" />
+                <div class="flex flex-col items-center justify-center text-center cursor-pointer py-6" onclick="document.getElementById('fileERP').click()">
+                    <div class="h-12 w-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-file-invoice-dollar text-xl"></i>
                     </div>
-                    <div>
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-200">Alur Pencocokan Audit Pajak &amp; PPN</h4>
-                        <p class="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                            Sistem akan mengambil <strong class="text-white">8 digit terakhir</strong> dari kolom No Tax (ERP) &amp; Nomor Faktur (DJP) sebagai key utama rekonsiliasi. Transaksi <strong>Retur / Pembalik / Minus</strong> akan disaring dan dikeluarkan secara otomatis untuk menghasilkan angka variance final yang akurat sesuai standar Tim Tax.
-                        </p>
+                    <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">UNGGAH BERKAS ERP</h3>
+                    <p class="text-[11px] text-slate-400 mt-1 max-w-xs">Drop berkas "Laporan Pencarian No Pajak & DPP" di sini</p>
+                </div>
+                <div id="statusERP" class="hidden mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                        <span id="nameERP" class="text-xs text-emerald-400 font-medium truncate"></span>
                     </div>
+                    <span id="rowsERP" class="px-2 py-0.5 bg-brand-500/10 text-brand-400 rounded-full font-mono text-[10px] border border-brand-500/20"></span>
                 </div>
             </div>
 
-            <!-- AREA 1: UPLOAD & DRAG DROP -->
-            <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- ERP File Upload -->
-                <div id="dropzoneERP" class="glass-panel p-6 rounded-2xl border-2 border-dashed border-slate-800 hover:border-brand-500/50 transition-all duration-300 relative group">
-                    <input type="file" id="fileERP" accept=".xlsx, .xls, .csv" class="hidden" />
-                    <div class="flex flex-col items-center justify-center text-center cursor-pointer py-6" onclick="document.getElementById('fileERP').click()">
-                        <div class="h-12 w-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 mb-4 group-hover:scale-110 transition-transform duration-300">
-                            <i class="fa-solid fa-file-invoice-dollar text-xl"></i>
-                        </div>
-                        <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">UNGGAH BERKAS ERP</h3>
-                        <p class="text-[11px] text-slate-400 mt-1 max-w-xs">Tarik &amp; lepas berkas "Laporan Pencarian No Pajak &amp; DPP" di sini, atau <span class="text-brand-400 underline font-medium">pilih berkas</span></p>
-                        <p class="text-[10px] text-slate-500 mt-3 font-medium">Format: .xlsx, .xls, .csv (Maks 100MB+)</p>
+            <!-- DJP File -->
+            <div id="dropzoneDJP" class="glass-panel p-6 rounded-2xl border-2 border-dashed border-slate-800 hover:border-emerald-500/50 transition-all duration-300 relative group">
+                <input type="file" id="fileDJP" accept=".xlsx, .xls, .csv" class="hidden" />
+                <div class="flex flex-col items-center justify-center text-center cursor-pointer py-6" onclick="document.getElementById('fileDJP').click()">
+                    <div class="h-12 w-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-building-columns text-xl"></i>
                     </div>
-                    <!-- File Loaded Status -->
-                    <div id="statusERP" class="hidden mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between">
-                        <div class="flex items-center gap-2 overflow-hidden">
-                            <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                            <span id="nameERP" class="text-xs text-emerald-400 font-medium truncate">erp_file.xlsx</span>
-                        </div>
-                        <span id="rowsERP" class="px-2 py-0.5 bg-brand-500/10 text-brand-400 rounded-full font-mono text-[10px] border border-brand-500/20">0 Baris</span>
+                    <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">UNGGAH BERKAS DJP A2</h3>
+                    <p class="text-[11px] text-slate-400 mt-1 max-w-xs">Drop berkas "REKAP_A2" dari sistem Coretax di sini</p>
+                </div>
+                <div id="statusDJP" class="hidden mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                        <span id="nameDJP" class="text-xs text-emerald-400 font-medium truncate"></span>
+                    </div>
+                    <span id="rowsDJP" class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded-full font-mono text-[10px] border border-emerald-500/20"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- AREA 2: MAPPING & PROCESS -->
+        <section id="sectionMapping" class="hidden glass-panel p-6 rounded-2xl grid grid-cols-1 lg:grid-cols-3 gap-6 transition-all duration-300">
+            <div class="lg:col-span-2 space-y-4">
+                <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
+                    <i class="fa-solid fa-list-check text-brand-400"></i>
+                    <h2 class="font-bold text-slate-200 text-sm">Pemetaan Kolom Kunci (Auto-Mapped)</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3 bg-slate-900/40 p-4 rounded-xl border border-slate-800/60">
+                        <h4 class="text-[11px] font-bold text-brand-400 tracking-wider uppercase"><i class="fa-solid fa-database mr-1"></i> File ERP</h4>
+                        <select id="mapErpInvoice" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-brand-500" title="Nomor Faktur ERP"></select>
+                        <select id="mapErpPpn" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-brand-500" title="Nominal PPN ERP"></select>
+                    </div>
+                    <div class="space-y-3 bg-slate-900/40 p-4 rounded-xl border border-slate-800/60">
+                        <h4 class="text-[11px] font-bold text-emerald-400 tracking-wider uppercase"><i class="fa-solid fa-landmark mr-1"></i> File DJP A2</h4>
+                        <select id="mapDjpInvoice" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-emerald-500" title="Nomor Faktur A2"></select>
+                        <select id="mapDjpPpn" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-emerald-500" title="Nominal VAT A2"></select>
                     </div>
                 </div>
-
-                <!-- DJP / Coretax File Upload -->
-                <div id="dropzoneDJP" class="glass-panel p-6 rounded-2xl border-2 border-dashed border-slate-800 hover:border-emerald-500/50 transition-all duration-300 relative group">
-                    <input type="file" id="fileDJP" accept=".xlsx, .xls, .csv" class="hidden" />
-                    <div class="flex flex-col items-center justify-center text-center cursor-pointer py-6" onclick="document.getElementById('fileDJP').click()">
-                        <div class="h-12 w-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-4 group-hover:scale-110 transition-transform duration-300">
-                            <i class="fa-solid fa-building-columns text-xl"></i>
-                        </div>
-                        <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">UNGGAH BERKAS DJP</h3>
-                        <p class="text-[11px] text-slate-400 mt-1 max-w-xs">Tarik &amp; lepas berkas "REKAP_A2" di sini, atau <span class="text-emerald-400 underline font-medium">pilih berkas</span></p>
-                        <p class="text-[10px] text-slate-500 mt-3 font-medium">Format: .xlsx, .xls, .csv (Maks 100MB+)</p>
-                    </div>
-                    <!-- File Loaded Status -->
-                    <div id="statusDJP" class="hidden mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between">
-                        <div class="flex items-center gap-2 overflow-hidden">
-                            <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                            <span id="nameDJP" class="text-xs text-emerald-400 font-medium truncate">djp_file.xlsx</span>
-                        </div>
-                        <span id="rowsDJP" class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded-full font-mono text-[10px] border border-emerald-500/20">0 Baris</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- AREA 2: COLUMN MAPPING & PROCESS LOGS -->
-            <section id="sectionMapping" class="hidden glass-panel p-6 rounded-2xl grid grid-cols-1 lg:grid-cols-3 gap-6 transition-all duration-300">
-                <!-- Mapping Form -->
-                <div class="lg:col-span-2 space-y-4">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <div class="flex items-center gap-2">
-                            <span class="h-6 w-6 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xs font-bold">1</span>
-                            <h2 class="font-bold text-slate-200 text-sm">Pemetaan Kolom Berkas (Column Mapping)</h2>
-                        </div>
-                        <span class="text-xs text-slate-400 italic">Sistem memetakan kolom secara otomatis</span>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Mapping for ERP File -->
-                        <div class="space-y-3 bg-slate-900/40 p-4 rounded-xl border border-slate-800/60">
-                            <h4 class="text-[11px] font-bold text-brand-400 tracking-wider uppercase flex items-center gap-1.5">
-                                <i class="fa-solid fa-file-invoice"></i> Kolom Berkas ERP
-                            </h4>
-                            <div class="space-y-2.5">
-                                <div>
-                                    <label class="block text-[10px] font-semibold text-slate-400 uppercase mb-1">Nomor Seri Faktur / No Tax <span class="text-red-400">*</span></label>
-                                    <select id="mapErpInvoice" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-brand-500"></select>
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-semibold text-slate-400 uppercase mb-1">PPN Nominal <span class="text-red-400">*</span></label>
-                                    <select id="mapErpPpn" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-brand-500"></select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Mapping for DJP File -->
-                        <div class="space-y-3 bg-slate-900/40 p-4 rounded-xl border border-slate-800/60">
-                            <h4 class="text-[11px] font-bold text-emerald-400 tracking-wider uppercase flex items-center gap-1.5">
-                                <i class="fa-solid fa-building-columns"></i> Kolom Berkas DJP / Rekap A2
-                            </h4>
-                            <div class="space-y-2.5">
-                                <div>
-                                    <label class="block text-[10px] font-semibold text-slate-400 uppercase mb-1">Nomor Faktur DJP <span class="text-red-400">*</span></label>
-                                    <select id="mapDjpInvoice" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-emerald-500"></select>
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-semibold text-slate-400 uppercase mb-1">VAT Nominal <span class="text-red-400">*</span></label>
-                                    <select id="mapDjpPpn" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-emerald-500"></select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-2 flex justify-end">
-                        <button id="btnProcess" class="px-6 py-3 font-bold text-xs text-white bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 rounded-xl shadow-lg shadow-brand-500/20 active:scale-95 transition-all flex items-center gap-2">
-                            <i class="fa-solid fa-circle-notch animate-spin hidden" id="spinnerProcess"></i>
-                            <i class="fa-solid fa-play" id="iconProcess"></i>
-                            Jalankan Pencocokan 8-Digit
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Process Logs Console -->
-                <div class="space-y-4 flex flex-col h-full min-h-[220px]">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3 shrink-0">
-                        <div class="flex items-center gap-2">
-                            <span class="h-6 w-6 rounded-lg bg-teal-500/10 text-teal-400 flex items-center justify-center text-xs font-bold">2</span>
-                            <h2 class="font-bold text-slate-200 text-sm">Konsol Aktivitas Rekon</h2>
-                        </div>
-                        <button id="btnClearLog" class="text-[10px] text-slate-400 hover:text-slate-200 underline">Bersihkan</button>
-                    </div>
-
-                    <div class="flex-1 bg-slate-950 rounded-xl border border-slate-850 p-4 font-mono text-[10px] text-slate-300 overflow-y-auto space-y-2 max-h-[200px]" id="logConsole">
-                        <div class="text-slate-500">&gt; Sistem siap memproses data...</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- AREA 3: RUNNING PROGRESS -->
-            <section id="sectionProgress" class="hidden glass-panel p-6 rounded-2xl space-y-4 transition-all duration-300">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
-                            <i class="fa-solid fa-spinner animate-spin text-brand-500"></i>
-                            Sedang Melakukan Rekonsiliasi...
-                        </h3>
-                        <p class="text-xs text-slate-400 mt-1" id="progressStatus">Mengurai index map untuk ribuan baris data...</p>
-                    </div>
-                    <span class="font-mono text-xs text-brand-400 font-bold" id="progressPercent">0%</span>
-                </div>
-                <div class="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden border border-slate-850">
-                    <div id="progressBar" class="bg-gradient-to-r from-brand-500 to-emerald-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
-                </div>
-            </section>
-
-            <!-- AREA 4: SUMMARY DASHBOARD -->
-            <section id="sectionDashboard" class="hidden space-y-6 transition-all duration-300">
-                <!-- Summary Header -->
-                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-slate-900/40 p-5 rounded-2xl border border-slate-800">
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-200 flex items-center gap-2">
-                            <i class="fa-solid fa-chart-pie text-brand-400"></i>
-                            Executive Summary Report PPN
-                        </h2>
-                        <p class="text-xs text-slate-400 mt-0.5">Ringkasan status sinkronisasi audit finansial PPN (Faktur Pajak) antara ERP dan DJP.</p>
-                    </div>
-                    <!-- Export Button -->
-                    <button id="btnExport" class="px-5 py-2.5 text-xs font-bold text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 rounded-xl active:scale-95 transition-all shadow-md shadow-emerald-500/10 flex items-center gap-2">
-                        <i class="fa-solid fa-file-excel"></i>
-                        Ekspor Hasil Audit Multi-Sheet (.xlsx)
+                <div class="pt-2 flex justify-end">
+                    <button id="btnProcess" class="px-6 py-3 font-bold text-xs text-slate-900 bg-brand-500 hover:bg-brand-400 rounded-xl shadow-lg shadow-brand-500/20 active:scale-95 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-play"></i> Mulai Pencocokan Dual-Side
                     </button>
                 </div>
-
-                <!-- Stats Grid -->
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    <!-- ERP Total PPN -->
-                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between relative overflow-hidden group">
-                        <span class="text-[10px] font-bold text-brand-400 uppercase tracking-wider">Total ERP PPN</span>
-                        <span class="text-xl font-bold mt-2 text-white mono" id="statTotalErp">Rp 0</span>
-                        <span class="text-[10px] text-slate-400 mt-1">Ekskl. Transaksi Retur</span>
-                    </div>
-
-                    <!-- DJP Total VAT -->
-                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between relative overflow-hidden group">
-                        <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Total DJP VAT</span>
-                        <span class="text-xl font-bold mt-2 text-white mono" id="statTotalDjp">Rp 0</span>
-                        <span class="text-[10px] text-slate-400 mt-1">Ekskl. Transaksi Retur</span>
-                    </div>
-
-                    <!-- TOTAL SELISIH FINAL -->
-                    <div class="glass-card p-4 rounded-xl border-l-4 border-rose-500 flex flex-col justify-between relative overflow-hidden">
-                        <span class="text-[10px] font-bold text-rose-400 uppercase tracking-wider">Selisih Final PPN</span>
-                        <span class="text-xl font-bold mt-2 text-rose-400 mono" id="statSelisihFinal">Rp 0</span>
-                        <span class="text-[10px] text-slate-400 mt-1 font-semibold" id="statVarianceLabel">Variance Terdeteksi</span>
-                    </div>
-
-                    <!-- MATCH RATE -->
-                    <div class="glass-card p-4 rounded-xl border-l-4 border-indigo-500 flex flex-col justify-between relative overflow-hidden">
-                        <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Match Rate Akurasi</span>
-                        <span class="text-xl font-bold mt-2 text-indigo-400 mono" id="statMatchRate">0%</span>
-                        <span class="text-[10px] text-slate-400 mt-1">Target Perusahaan &gt;= 95%</span>
-                    </div>
-
-                    <!-- TOTAL FAKTUR DIPROSES -->
-                    <div class="glass-card p-4 rounded-xl flex flex-col justify-between relative overflow-hidden">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Faktur Diproses</span>
-                        <span class="text-xl font-bold mt-2 text-slate-200 mono" id="statTotalProcessed">0 Rows</span>
-                        <span class="text-[10px] text-amber-400 mt-1 italic" id="statReturExcluded">0 Retur Disaring Otomatis</span>
-                    </div>
+            </div>
+            <!-- Log Console -->
+            <div class="space-y-3 flex flex-col h-full min-h-[220px]">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                    <h2 class="font-bold text-slate-200 text-sm">Log Proses Sistem</h2>
                 </div>
-
-                <!-- SUB SUMMARY GRID -->
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                    <div class="bg-slate-900/40 border border-slate-800 p-3 rounded-xl text-center">
-                        <span class="text-[10px] font-semibold text-emerald-400 block uppercase">Matched Data</span>
-                        <span id="subMatched" class="text-lg font-bold font-mono text-emerald-400">0</span>
-                    </div>
-                    <div class="bg-slate-900/40 border border-slate-800 p-3 rounded-xl text-center">
-                        <span class="text-[10px] font-semibold text-rose-400 block uppercase">Selisih Nominal PPN</span>
-                        <span id="subSelisih" class="text-lg font-bold font-mono text-rose-400">0</span>
-                    </div>
-                    <div class="bg-slate-900/40 border border-slate-800 p-3 rounded-xl text-center">
-                        <span class="text-[10px] font-semibold text-slate-300 block uppercase">Missing DJP (e-Faktur)</span>
-                        <span id="subMissingDjp" class="text-lg font-bold font-mono text-slate-300">0</span>
-                    </div>
-                    <div class="bg-slate-900/40 border border-slate-800 p-3 rounded-xl text-center">
-                        <span class="text-[10px] font-semibold text-slate-400 block uppercase">Missing ERP (Accounting)</span>
-                        <span id="subMissingErp" class="text-lg font-bold font-mono text-slate-400">0</span>
-                    </div>
-                    <div class="bg-slate-900/40 border border-slate-800 p-3 rounded-xl text-center">
-                        <span class="text-[10px] font-semibold text-amber-400 block uppercase">Duplicate ERP (8-Digit)</span>
-                        <span id="subDuplicateErp" class="text-lg font-bold font-mono text-amber-400">0</span>
-                    </div>
-                </div>
-
-                <!-- DIAGRAM SEBARAN DATA & TOP VARIANCE -->
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <!-- Diagram SVG Sebaran -->
-                    <div class="lg:col-span-4 glass-panel p-5 rounded-2xl flex flex-col justify-between">
-                        <h3 class="text-xs font-bold uppercase text-slate-200 tracking-wider mb-3 flex items-center gap-1.5">
-                            <i class="fa-solid fa-chart-donut text-brand-400"></i>
-                            Status Distribusi PPN
-                        </h3>
-                        <div class="flex items-center justify-center p-4">
-                            <svg viewBox="0 0 100 100" class="w-36 h-36">
-                                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#1e293b" stroke-width="12"></circle>
-                                <!-- Matched Arc -->
-                                <circle id="svgMatchedArc" cx="50" cy="50" r="40" fill="transparent" stroke="#10b981" stroke-width="12" stroke-dasharray="0 251.2" stroke-dashoffset="0"></circle>
-                                <!-- Selisih Arc -->
-                                <circle id="svgSelisihArc" cx="50" cy="50" r="40" fill="transparent" stroke="#ef4444" stroke-width="12" stroke-dasharray="0 251.2" stroke-dashoffset="0"></circle>
-                                <!-- Missing Arc -->
-                                <circle id="svgMissingArc" cx="50" cy="50" r="40" fill="transparent" stroke="#6b7280" stroke-width="12" stroke-dasharray="0 251.2" stroke-dashoffset="0"></circle>
-                            </svg>
-                        </div>
-                        <div class="space-y-1.5 text-[11px] pt-3 border-t border-slate-800/80">
-                            <div class="flex justify-between items-center">
-                                <span class="flex items-center gap-1.5 text-emerald-400"><span class="w-2.5 h-2.5 rounded bg-emerald-500 block"></span> MATCHED</span>
-                                <span class="mono font-semibold" id="pctMatched">0%</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="flex items-center gap-1.5 text-rose-400"><span class="w-2.5 h-2.5 rounded bg-rose-500 block"></span> SELISIH PPN</span>
-                                <span class="mono font-semibold" id="pctSelisih">0%</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="flex items-center gap-1.5 text-slate-400"><span class="w-2.5 h-2.5 rounded bg-gray-500 block"></span> MISSING / DUP</span>
-                                <span class="mono font-semibold" id="pctMissing">0%</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Top 20 Discrepancies -->
-                    <div class="lg:col-span-8 glass-panel p-5 rounded-2xl">
-                        <h3 class="text-xs font-bold uppercase text-rose-400 tracking-wider mb-3 flex items-center gap-1.5">
-                            <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
-                            TOP 20 Selisih PPN Terbesar (Audit Priority)
-                        </h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs whitespace-nowrap">
-                                <thead>
-                                    <tr class="text-slate-400 border-b border-slate-800">
-                                        <th class="pb-2">Recon Key (8-Digit)</th>
-                                        <th class="pb-2">No. Seri Faktur ERP</th>
-                                        <th class="pb-2 text-right">PPN ERP</th>
-                                        <th class="pb-2 text-right">VAT DJP</th>
-                                        <th class="pb-2 text-right text-rose-400">Selisih</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="topVarianceBody" class="divide-y divide-slate-900/60 font-mono">
-                                    <tr>
-                                        <td colspan="5" class="py-4 text-center text-slate-500 italic">Tidak ditemukan data selisih nominal</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Interactive Report Table Area -->
-                <div class="glass-panel p-6 rounded-2xl space-y-4">
-                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                        <h3 class="text-sm font-semibold text-slate-200">Data Transaksi Terkonsiliasi</h3>
-                        
-                        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                            <!-- Search Box -->
-                            <div class="relative flex-1 md:w-64">
-                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                </span>
-                                <input type="text" id="tableSearch" placeholder="Cari invoice, faktur, NPWP..." class="w-full bg-slate-950 border border-slate-850 rounded-lg text-xs pl-9 pr-4 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500">
-                            </div>
-
-                            <!-- Status Filter Dropdown -->
-                            <select id="statusFilter" class="bg-slate-950 border border-slate-850 rounded-lg text-xs px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-500">
-                                <option value="ALL">Semua Status (Tampilkan Semua)</option>
-                                <option value="MATCH">MATCH</option>
-                                <option value="SELISIH_PPN">SELISIH PPN</option>
-                                <option value="MISSING_DJP">MISSING DJP (Belum Terlapor)</option>
-                                <option value="MISSING_ERP">MISSING ERP (Tidak ada di ERP)</option>
-                                <option value="DUPLICATE_ERP">DUPLICATE ERP</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Main Data Table -->
-                    <div class="overflow-x-auto rounded-xl border border-slate-850 relative max-h-[500px]">
-                        <table class="w-full text-left text-xs text-slate-300 border-collapse">
-                            <thead class="sticky top-0 bg-slate-900/95 font-semibold text-slate-200 border-b border-slate-850 z-10">
-                                <tr>
-                                    <th class="p-3 text-center w-12 bg-slate-900">#</th>
-                                    <th class="p-3 bg-slate-900">Status Rekon</th>
-                                    <th class="p-3 bg-slate-900">Recon Key (8-Digit)</th>
-                                    <th class="p-3 bg-slate-900">No. Seri Faktur ERP</th>
-                                    <th class="p-3 bg-slate-900">Nomor Faktur DJP</th>
-                                    <th class="p-3 text-right bg-slate-900">PPN ERP</th>
-                                    <th class="p-3 text-right bg-slate-900">VAT DJP</th>
-                                    <th class="p-3 text-right bg-slate-900 text-rose-400">Selisih</th>
-                                    <th class="p-3 bg-slate-900">Catatan Audit</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody" class="divide-y divide-slate-850 bg-slate-950/20 font-mono">
-                                <!-- Rows will be injected here dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Pagination & Table Info -->
-                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-3 border-t border-slate-850">
-                        <span class="text-xs text-slate-400" id="tableInfo">Menampilkan 0 dari 0 data transaksi</span>
-                        
-                        <div class="flex items-center gap-1.5">
-                            <button id="btnPrevPage" class="p-1.5 bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:hover:bg-slate-900 border border-slate-850 rounded-lg text-xs" disabled>
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                                </svg>
-                            </button>
-                            <span id="pageNumbers" class="text-xs font-semibold px-2.5">Halaman 1 dari 1</span>
-                            <button id="btnNextPage" class="p-1.5 bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:hover:bg-slate-900 border border-slate-850 rounded-lg text-xs" disabled>
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- ================= TAB 2: EXCEL TO CSV CONVERTER ================= -->
-        <div id="viewConverter" class="hidden space-y-6">
-            <div class="glass-panel p-6 rounded-2xl space-y-6">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-200 flex items-center gap-2">
-                        <i class="fa-solid fa-file-csv text-brand-400"></i>
-                        Excel to CSV Converter (Offline, Cepat &amp; Aman)
-                    </h2>
-                    <p class="text-xs text-slate-400 mt-1 max-w-4xl">
-                        Mencegah crash pada berkas raksasa di atas 100MB+. Gunakan utilitas konverter offline ini untuk mengubah format berkas Excel <strong class="text-white">"Laporan Pencarian No Pajak &amp; DPP Berdasarkan SI"</strong> atau <strong class="text-white">"REKAP_A2"</strong> Anda menjadi format CSV yang dioptimalkan untuk memori.
-                    </p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Dropzone converter -->
-                    <div id="dropzoneConv" class="p-6 rounded-xl border-2 border-dashed border-slate-800 hover:border-brand-500/50 transition-all duration-300 relative group flex flex-col justify-center min-h-[220px]">
-                        <input type="file" id="fileConv" accept=".xlsx, .xls" class="hidden" />
-                        <div class="flex flex-col items-center justify-center text-center cursor-pointer" onclick="document.getElementById('fileConv').click()">
-                            <div class="h-12 w-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <i class="fa-solid fa-file-excel text-2xl"></i>
-                            </div>
-                            <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">UNGGAH BERKAS EXCEL</h3>
-                            <p class="text-[11px] text-slate-400 mt-1 max-w-xs">Tarik &amp; lepas berkas excel yang ingin dikonversi ke CSV di sini</p>
-                        </div>
-                    </div>
-
-                    <!-- Options & Actions -->
-                    <div class="bg-slate-900/30 border border-slate-850 p-6 rounded-xl space-y-4 flex flex-col justify-between">
-                        <div class="space-y-4">
-                            <h3 class="text-xs font-bold text-brand-400 tracking-wider uppercase">Pengaturan Ekspor CSV</h3>
-                            
-                            <div>
-                                <label class="block text-[11px] text-slate-400 mb-1.5 font-medium">Informasi Berkas:</label>
-                                <div id="convFileInfo" class="text-xs text-slate-500 italic p-3 bg-slate-950/60 rounded-lg border border-slate-850 min-h-[44px] flex items-center">
-                                    Belum ada berkas excel yang diunggah.
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-[11px] text-slate-400 mb-1.5 font-medium">Pilih Sheet:</label>
-                                <select id="convSheetSelect" class="w-full bg-slate-950 border border-slate-850 rounded-lg text-xs p-2.5 text-slate-300 focus:outline-none focus:border-brand-500" disabled>
-                                    <option value="">-- Unggah berkas excel terlebih dahulu --</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <button id="btnStartConvert" class="w-full py-3 font-bold text-xs text-slate-950 bg-brand-500 hover:bg-brand-400 disabled:opacity-30 disabled:hover:bg-brand-500 transition-all rounded-lg flex items-center justify-center gap-2" disabled>
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>
-                            Mulai Konversi &amp; Unduh CSV
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Converter Progress Bar -->
-                <div id="convProgressArea" class="hidden bg-slate-900/40 p-4 border border-slate-850 rounded-xl space-y-2 animate-pulse">
-                    <div class="flex justify-between items-center text-xs">
-                        <span id="convProgressTxt" class="text-slate-300 font-medium">Mengekstrak berkas excel...</span>
-                        <span id="convProgressPercent" class="font-mono text-brand-400 font-bold">0%</span>
-                    </div>
-                    <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-850">
-                        <div id="convProgressBar" class="bg-gradient-to-r from-brand-500 to-emerald-500 h-2 transition-all duration-150" style="width: 0%"></div>
-                    </div>
+                <div class="flex-1 bg-slate-950 rounded-xl border border-slate-850 p-4 font-mono text-[10px] text-slate-300 overflow-y-auto space-y-2" id="logConsole">
+                    <div class="text-slate-500">&gt; Sistem audit siap...</div>
                 </div>
             </div>
-        </div>
+        </section>
+
+        <!-- AREA 3: RUNNING PROGRESS -->
+        <section id="sectionProgress" class="hidden glass-panel p-6 rounded-2xl space-y-4 transition-all duration-300">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-spinner animate-spin text-brand-500"></i> Memproses VLOOKUP Audit...
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-1" id="progressStatus">Mengurai index map...</p>
+                </div>
+                <span class="font-mono text-xs text-brand-400 font-bold" id="progressPercent">0%</span>
+            </div>
+            <div class="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden border border-slate-850">
+                <div id="progressBar" class="bg-brand-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+            </div>
+        </section>
+
+        <!-- AREA 4: DASHBOARD & EXPORT -->
+        <section id="sectionDashboard" class="hidden space-y-6 transition-all duration-300">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-900/40 p-5 rounded-2xl border border-slate-800">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-200"><i class="fa-solid fa-check-double text-emerald-400 mr-2"></i>Audit Selesai</h2>
+                    <p class="text-xs text-slate-400 mt-1">Struktur data asli berhasil dipertahankan. Kolom VLOOKUP telah ditambahkan.</p>
+                </div>
+                <button id="btnExport" class="px-6 py-3 text-xs font-bold text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 rounded-xl active:scale-95 transition-all shadow-md shadow-emerald-500/10 flex items-center gap-2">
+                    <i class="fa-solid fa-file-excel text-base"></i> UNDUH MASTER EXCEL (HASIL AUDIT 2 SHEET)
+                </button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="glass-card p-4 rounded-xl flex flex-col justify-between">
+                    <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Total Match / Sinkron</span>
+                    <span class="text-xl font-bold mt-2 text-white mono" id="statMatched">0</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl flex flex-col justify-between border-l-2 border-rose-500">
+                    <span class="text-[10px] font-bold text-rose-400 uppercase tracking-wider">Selisih PPN Deteksi</span>
+                    <span class="text-xl font-bold mt-2 text-white mono" id="statSelisih">0</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl flex flex-col justify-between">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Missing (A2 / ERP)</span>
+                    <span class="text-xl font-bold mt-2 text-white mono" id="statMissing">0</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl flex flex-col justify-between border-l-2 border-amber-500">
+                    <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Duplicate Record</span>
+                    <span class="text-xl font-bold mt-2 text-white mono" id="statDuplicate">0</span>
+                </div>
+            </div>
+
+            <!-- Data Preview ERP -->
+            <div class="glass-panel p-6 rounded-2xl space-y-4">
+                <h3 class="text-sm font-semibold text-slate-200">Pratinjau Data ERP (Dengan Kolom Tambahan Audit)</h3>
+                <div class="overflow-x-auto rounded-xl border border-slate-850 max-h-[400px]">
+                    <table class="w-full text-left text-xs text-slate-300 whitespace-nowrap">
+                        <thead class="sticky top-0 bg-slate-900 font-semibold text-slate-200 border-b border-slate-850 z-10">
+                            <tr>
+                                <th class="p-3">#</th>
+                                <th class="p-3">No Seri Faktur Asli</th>
+                                <th class="p-3 text-right">PPN Asli</th>
+                                <!-- Kolom Tambahan (Audit) -->
+                                <th class="p-3 bg-brand-500/10 text-brand-300">KEY_8_DIGIT</th>
+                                <th class="p-3 bg-brand-500/10 text-brand-300 text-right">VAT_A2 (Vlookup)</th>
+                                <th class="p-3 bg-brand-500/10 text-brand-300">STATUS_MATCH</th>
+                                <th class="p-3 bg-brand-500/10 text-brand-300 text-right">SELISIH_PPN</th>
+                                <th class="p-3 bg-brand-500/10 text-brand-300">DUPLICATE_STATUS</th>
+                                <th class="p-3 bg-brand-500/10 text-brand-300">KETERANGAN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBodyPreview" class="divide-y divide-slate-850 font-mono">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-[10px] text-slate-500 italic">* Menampilkan 50 baris pertama. Silakan unduh Excel untuk melihat laporan utuh beserta Sheet A2.</p>
+            </div>
+        </section>
 
     </main>
 
-    <!-- FOOTER -->
-    <footer class="mt-auto border-t border-slate-900 py-4 px-6 text-center text-xs text-slate-500">
-        <p>&copy; 2026 Tax Reconciliation System ERP vs DJP. Finance &amp; Tax Division. Seluruh algoritma diproses secara internal dan aman di dalam browser.</p>
-    </footer>
-
-    <!-- INLINE WEB WORKER SCRIPT - High Performance Reconciliation Engine -->
+    <!-- INLINE WEB WORKER (Cross Check Engine) -->
     <script id="recon-worker" type="javascript/worker">
         self.onmessage = function(e) {
             const { erpRaw, djpRaw, erpMap, djpMap } = e.data;
             
-            // Helper normalisasi number & retur check
-            function cleanAndNormalizeNum(val) {
-                if (val === undefined || val === null || val === "") return 0;
+            // Utility Data Cleaner
+            function cleanNum(val) {
+                if (!val) return 0;
                 if (typeof val === 'number') return Math.round(val);
                 let clean = String(val).replace(/Rp/gi, "").replace(/\s/g, "");
-                
                 const dotIdx = clean.lastIndexOf('.');
                 const commaIdx = clean.lastIndexOf(',');
-                if (commaIdx > dotIdx) {
-                    clean = clean.replace(/\./g, "").replace(/,/g, ".");
-                } else if (dotIdx > commaIdx) {
-                    clean = clean.replace(/,/g, "");
-                } else {
-                    clean = clean.replace(/,/g, "");
-                }
+                if (commaIdx > dotIdx) clean = clean.replace(/\./g, "").replace(/,/g, ".");
+                else if (dotIdx > commaIdx) clean = clean.replace(/,/g, "");
+                else clean = clean.replace(/,/g, "");
                 const num = parseFloat(clean);
                 return isNaN(num) ? 0 : Math.round(num);
             }
 
-            function extract8Digits(val) {
-                if (val === undefined || val === null) return "";
+            function get8Digits(val) {
+                if (!val) return "";
                 const clean = String(val).replace(/[^0-9]/g, "");
                 return clean.length >= 8 ? clean.slice(-8) : clean;
             }
 
-            // Return checking logic (Excludes Return Transactions)
-            function checkIsRetur(row, invoiceVal, nominalVal) {
+            // Exclude Return Logic (Extremely Strict for Audit)
+            function isReturn(row, invoiceVal, nominalVal) {
                 if (nominalVal < 0) return true;
                 const invStr = String(invoiceVal || '').toLowerCase();
                 if (invStr.includes('retur') || invStr.includes('return')) return true;
                 
-                // Scan all columns for return keywords or minus signs
                 for (const key in row) {
                     const strVal = String(row[key] || '').toLowerCase();
                     if (strVal.includes('retur') || strVal.includes('return')) return true;
@@ -638,1081 +300,498 @@
                 return false;
             }
 
-            self.postMessage({ type: 'status', msg: 'Mengekstrak dan memfilter Retur pada data ERP...' });
-            
-            let returExcludedCount = 0;
-            
-            // Normalize ERP
-            const erpList = [];
-            erpRaw.forEach((row, idx) => {
-                const rawInvoice = row[erpMap.invoice] || "";
-                const rawPpn = row[erpMap.ppn] || 0;
-                const normalizedPpn = cleanAndNormalizeNum(rawPpn);
-                
-                if (checkIsRetur(row, rawInvoice, normalizedPpn)) {
-                    returExcludedCount++;
-                    return; // Exclude return transaction entirely
-                }
+            self.postMessage({ type: 'status', msg: 'Indexing & Membersihkan Data ERP...' });
 
-                erpList.push({
-                    id: `erp_${idx}`,
-                    key8: extract8Digits(rawInvoice),
-                    rawInvoice: String(rawInvoice),
-                    ppn: normalizedPpn,
-                    row: row
-                });
+            const erpProcessed = erpRaw.map((row) => {
+                const invoice = row[erpMap.invoice] || "";
+                const ppn = cleanNum(row[erpMap.ppn]);
+                const isRet = isReturn(row, invoice, ppn);
+                return { 
+                    row, invoice, ppn, 
+                    isRetur: isRet, 
+                    key8: isRet ? "" : get8Digits(invoice) 
+                };
             });
 
-            self.postMessage({ type: 'status', msg: 'Mengekstrak dan memfilter Retur pada data DJP...' });
+            self.postMessage({ type: 'status', msg: 'Indexing & Membersihkan Data DJP A2...' });
 
-            // Normalize DJP
-            const djpList = [];
-            djpRaw.forEach((row, idx) => {
-                const rawInvoice = row[djpMap.invoice] || "";
-                const rawVat = row[djpMap.ppn] || 0;
-                const normalizedVat = cleanAndNormalizeNum(rawVat);
-
-                if (checkIsRetur(row, rawInvoice, normalizedVat)) {
-                    returExcludedCount++;
-                    return; // Exclude return transaction entirely
-                }
-
-                djpList.push({
-                    id: `djp_${idx}`,
-                    key8: extract8Digits(rawInvoice),
-                    rawInvoice: String(rawInvoice),
-                    vat: normalizedVat,
-                    row: row
-                });
+            const djpProcessed = djpRaw.map((row) => {
+                const invoice = row[djpMap.invoice] || "";
+                const vat = cleanNum(row[djpMap.ppn]);
+                const isRet = isReturn(row, invoice, vat);
+                return { 
+                    row, invoice, vat, 
+                    isRetur: isRet, 
+                    key8: isRet ? "" : get8Digits(invoice) 
+                };
             });
 
-            self.postMessage({ type: 'status', msg: 'Mendeteksi data ganda pada berkas ERP...' });
+            // Duplicate Mappings
+            const erpDup = new Map();
+            erpProcessed.forEach(i => { if (i.key8) erpDup.set(i.key8, (erpDup.get(i.key8) || 0) + 1); });
+            const djpDup = new Map();
+            djpProcessed.forEach(i => { if (i.key8) djpDup.set(i.key8, (djpDup.get(i.key8) || 0) + 1); });
 
-            // ERP Duplicate Detection based on last 8 digits
-            const erpDupTracker = new Map();
-            erpList.forEach(item => {
-                if (item.key8) {
-                    if (!erpDupTracker.has(item.key8)) {
-                        erpDupTracker.set(item.key8, []);
-                    }
-                    erpDupTracker.get(item.key8).push(item);
-                }
-            });
+            // Lookup Maps
+            const djpLookup = new Map();
+            djpProcessed.forEach(i => { if (i.key8 && !djpLookup.has(i.key8)) djpLookup.set(i.key8, i.vat); });
+            const erpLookup = new Map();
+            erpProcessed.forEach(i => { if (i.key8 && !erpLookup.has(i.key8)) erpLookup.set(i.key8, i.ppn); });
 
-            const erpDuplicates = new Set();
-            erpDupTracker.forEach((list, key) => {
-                if (list.length > 1) {
-                    list.forEach(item => erpDuplicates.add(item.id));
-                }
-            });
+            self.postMessage({ type: 'status', msg: 'Mengeksekusi VLOOKUP Silang (Tanpa Merusak Data Asli)...' });
 
-            self.postMessage({ type: 'status', msg: 'Mencocokkan data menggunakan Map Indexing Engine...' });
+            let cMatch=0, cSelisih=0, cMissA2=0, cMissErp=0, cDup=0;
 
-            // DJP indexing by 8 digit key
-            const djpIndex = new Map();
-            djpList.forEach(item => {
-                if (item.key8) {
-                    if (!djpIndex.has(item.key8)) {
-                        djpIndex.set(item.key8, []);
-                    }
-                    djpIndex.get(item.key8).push(item);
-                }
-            });
+            // Generate Sheet 1 (ERP) - Append specific columns ONLY
+            const sheet1Rows = erpProcessed.map(i => {
+                const append = {
+                    KEY_8_DIGIT: i.key8,
+                    VAT_A2: 0,
+                    STATUS_MATCH: 'MATCH',
+                    DUPLICATE_STATUS: 'NORMAL',
+                    SELISIH_PPN: 0,
+                    MATCH_FOUND: 'YES',
+                    KETERANGAN: ''
+                };
 
-            const results = [];
-            const processedDjpIds = new Set();
-
-            // 1. Loop over ERP to match DJP
-            erpList.forEach(erp => {
-                // Skenario A: Duplicate ERP
-                if (erpDuplicates.has(erp.id)) {
-                    results.push({
-                        key8: erp.key8,
-                        erpInvoice: erp.rawInvoice,
-                        djpInvoice: '-',
-                        erpPpn: erp.ppn,
-                        djpVat: 0,
-                        selisih: erp.ppn,
-                        status: 'DUPLICATE_ERP',
-                        keterangan: 'Nomor Seri Faktur Pajak ganda terdeteksi di data internal ERP.'
-                    });
-                    return;
-                }
-
-                const djpMatches = djpIndex.get(erp.key8);
-
-                // Skenario B: Belum Terlapor (Missing DJP)
-                if (!djpMatches || djpMatches.length === 0) {
-                    results.push({
-                        key8: erp.key8,
-                        erpInvoice: erp.rawInvoice,
-                        djpInvoice: '-',
-                        erpPpn: erp.ppn,
-                        djpVat: 0,
-                        selisih: erp.ppn,
-                        status: 'MISSING_DJP',
-                        keterangan: 'Faktur tercatat di ERP, tetapi tidak terdeteksi terdaftar di sistem e-Faktur DJP.'
-                    });
+                if (i.isRetur) {
+                    append.STATUS_MATCH = 'EXCLUDED_RETUR';
+                    append.MATCH_FOUND = 'NO';
+                    append.KETERANGAN = 'Transaksi retur tidak direkonsiliasi';
                 } else {
-                    const match = djpMatches[0]; // Ambil data pertama
-                    processedDjpIds.add(match.id);
+                    const isDuplicate = erpDup.get(i.key8) > 1;
+                    if (isDuplicate) append.DUPLICATE_STATUS = 'DUPLICATE';
 
-                    const selisihVal = erp.ppn - match.vat;
-
-                    if (selisihVal !== 0) {
-                        results.push({
-                            key8: erp.key8,
-                            erpInvoice: erp.rawInvoice,
-                            djpInvoice: match.rawInvoice,
-                            erpPpn: erp.ppn,
-                            djpVat: match.vat,
-                            selisih: selisihVal,
-                            status: 'SELISIH_PPN',
-                            keterangan: `Terdapat selisih perhitungan nominal PPN sebesar Rp ${selisihVal.toLocaleString('id-ID')}`
-                        });
+                    const vatA2 = djpLookup.get(i.key8);
+                    if (vatA2 === undefined) {
+                        append.STATUS_MATCH = isDuplicate ? 'DUPLICATE' : 'MISSING_A2';
+                        append.MATCH_FOUND = 'NO';
+                        append.SELISIH_PPN = i.ppn;
+                        append.KETERANGAN = isDuplicate ? 'Faktur ganda terdeteksi (Duplikat)' : 'Faktur tidak ditemukan di sistem DJP (Belum Lapor)';
                     } else {
-                        results.push({
-                            key8: erp.key8,
-                            erpInvoice: erp.rawInvoice,
-                            djpInvoice: match.rawInvoice,
-                            erpPpn: erp.ppn,
-                            djpVat: match.vat,
-                            selisih: 0,
-                            status: 'MATCH',
-                            keterangan: 'Data PPN sinkron dan cocok sempurna.'
-                        });
+                        append.VAT_A2 = vatA2;
+                        const diff = i.ppn - vatA2;
+                        append.SELISIH_PPN = diff;
+                        
+                        if (isDuplicate) {
+                            append.STATUS_MATCH = 'DUPLICATE';
+                            append.KETERANGAN = 'Faktur ganda terdeteksi (Duplikat)';
+                        } else if (diff !== 0) {
+                            append.STATUS_MATCH = 'SELISIH';
+                            append.KETERANGAN = 'Terdapat selisih nominal PPN';
+                        } else {
+                            append.KETERANGAN = 'Faktur dan nominal PPN sesuai';
+                        }
+                    }
+                    
+                    // Metrics (Calculate from ERP side)
+                    if (append.STATUS_MATCH === 'MATCH') cMatch++;
+                    else if (append.STATUS_MATCH === 'SELISIH') cSelisih++;
+                    else if (append.STATUS_MATCH === 'MISSING_A2') cMissA2++;
+                    else if (append.STATUS_MATCH === 'DUPLICATE') cDup++;
+                }
+                
+                // CRITICAL: Return original row data first, THEN appended properties.
+                return Object.assign({}, i.row, append);
+            });
+
+            // Generate Sheet 2 (A2)
+            const sheet2Rows = djpProcessed.map(i => {
+                const append = {
+                    KEY_8_DIGIT: i.key8,
+                    PPN_ERP: 0,
+                    STATUS_MATCH: 'MATCH',
+                    DUPLICATE_STATUS: 'NORMAL',
+                    SELISIH_PPN: 0,
+                    MATCH_FOUND: 'YES',
+                    KETERANGAN: ''
+                };
+
+                if (i.isRetur) {
+                    append.STATUS_MATCH = 'EXCLUDED_RETUR';
+                    append.MATCH_FOUND = 'NO';
+                    append.KETERANGAN = 'Transaksi retur tidak direkonsiliasi';
+                } else {
+                    const isDuplicate = djpDup.get(i.key8) > 1;
+                    if (isDuplicate) append.DUPLICATE_STATUS = 'DUPLICATE';
+
+                    const ppnErp = erpLookup.get(i.key8);
+                    if (ppnErp === undefined) {
+                        append.STATUS_MATCH = isDuplicate ? 'DUPLICATE' : 'MISSING_ERP';
+                        append.MATCH_FOUND = 'NO';
+                        append.SELISIH_PPN = -i.vat;
+                        append.KETERANGAN = isDuplicate ? 'Faktur ganda terdeteksi (Duplikat)' : 'Faktur tidak tercatat di ERP';
+                        cMissErp++; // Increment Missing ERP metric
+                    } else {
+                        append.PPN_ERP = ppnErp;
+                        const diff = ppnErp - i.vat;
+                        append.SELISIH_PPN = diff;
+                        
+                        if (isDuplicate) {
+                            append.STATUS_MATCH = 'DUPLICATE';
+                            append.KETERANGAN = 'Faktur ganda terdeteksi (Duplikat)';
+                        } else if (diff !== 0) {
+                            append.STATUS_MATCH = 'SELISIH';
+                            append.KETERANGAN = 'Terdapat selisih nominal PPN';
+                        } else {
+                            append.KETERANGAN = 'Faktur dan nominal PPN sesuai';
+                        }
                     }
                 }
-            });
-
-            // 2. Loop over remaining DJP for Missing ERP
-            djpList.forEach(djp => {
-                if (processedDjpIds.has(djp.id)) return;
-
-                results.push({
-                    key8: djp.key8,
-                    erpInvoice: '-',
-                    djpInvoice: djp.rawInvoice,
-                    erpPpn: 0,
-                    djpVat: djp.vat,
-                    selisih: -djp.vat,
-                    status: 'MISSING_ERP',
-                    keterangan: 'Faktur terbit di DJP, tetapi belum diinput ke dalam sistem pencatatan ERP.'
-                });
-            });
-
-            // Calculate final metrics
-            let totalErpPpn = 0;
-            let totalDjpVat = 0;
-            let totalSelisihFinal = 0;
-            
-            let countMatched = 0;
-            let countSelisihData = 0;
-            let countMissingDjp = 0;
-            let countMissingErp = 0;
-            let countDuplicateErp = 0;
-
-            results.forEach(item => {
-                totalErpPpn += item.erpPpn;
-                totalDjpVat += item.djpVat;
                 
-                if (item.status === 'MATCH') countMatched++;
-                else if (item.status === 'SELISIH_PPN') countSelisihData++;
-                else if (item.status === 'MISSING_DJP') countMissingDjp++;
-                else if (item.status === 'MISSING_ERP') countMissingErp++;
-                else if (item.status === 'DUPLICATE_ERP') countDuplicateErp++;
+                return Object.assign({}, i.row, append);
             });
-
-            totalSelisihFinal = totalErpPpn - totalDjpVat;
-            const matchRate = results.length > 0 ? (countMatched / results.length) * 100 : 0;
 
             self.postMessage({
                 type: 'done',
-                results: results,
-                metrics: {
-                    totalErpPpn,
-                    totalDjpVat,
-                    totalSelisihFinal,
-                    countMatched,
-                    countSelisihData,
-                    countMissingDjp,
-                    countMissingErp,
-                    countDuplicateErp,
-                    matchRate,
-                    returExcludedCount,
-                    totalProcessed: results.length
-                }
+                sheet1Rows,
+                sheet2Rows,
+                metrics: { cMatch, cSelisih, cMissA2, cMissErp, cDup }
             });
         };
     </script>
 
-    <!-- MAIN SYSTEM LOGIC -->
+    <!-- MAIN UI & EXPORT SCRIPT -->
     <script>
-        // --- GLOBAL STATE ---
-        let rawErpData = [];
-        let rawDjpData = [];
-        let erpColumns = [];
-        let djpColumns = [];
-        
-        let finalReportData = []; // Combined reconciliation output
-        let filteredData = []; // Combined reconciliation output after table filters
-        let finalMetrics = {}; // KPI & Executive summary statistics
-        
-        // Pagination state
-        let currentPage = 1;
-        const rowsPerPage = 25;
-        let currentSortColumn = 'status';
-        let currentSortDirection = 'asc';
+        let rawErpData = [], rawDjpData = [];
+        let erpColumns = [], djpColumns = [];
+        let finalReportDataERP = [], finalReportDataA2 = [];
+        let finalMetrics = {};
 
-        // Excel to CSV State
-        let converterWorkbook = null;
-        let converterFileName = "";
-
-        // --- SISTEM LOGGER ---
-        function writeLog(message, type = 'info') {
+        // Logger & Notifications
+        const writeLog = (msg, type = 'info') => {
             const consoleEl = document.getElementById('logConsole');
-            const colorClass = {
-                info: 'text-slate-300',
-                success: 'text-emerald-400 font-medium',
-                warning: 'text-amber-400',
-                error: 'text-red-400 font-bold'
-            }[type];
-            
-            const timestamp = new Date().toLocaleTimeString('id-ID');
-            consoleEl.innerHTML += `<div class="${colorClass}">&gt; [${timestamp}] ${message}</div>`;
+            const color = type === 'success' ? 'text-emerald-400' : type === 'error' ? 'text-red-400' : 'text-slate-300';
+            consoleEl.innerHTML += `<div class="${color}">&gt; [${new Date().toLocaleTimeString('id-ID')}] ${msg}</div>`;
             consoleEl.scrollTop = consoleEl.scrollHeight;
-        }
+        };
 
-        // --- CUSTOM TOAST NOTIFICATION ---
-        function showNotification(message, type = 'success') {
-            const notifArea = document.getElementById('notificationArea');
-            notifArea.className = "mb-6 p-4 rounded-xl border flex items-center gap-3 animate-fade-in";
+        const showNotif = (msg, type = 'success') => {
+            const el = document.getElementById('notificationArea');
+            el.className = `mb-6 p-4 rounded-xl border flex items-center gap-3 animate-fade-in ${type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/20 text-red-400'}`;
+            el.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'} text-lg"></i> <span class="text-xs font-semibold">${msg}</span>`;
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 5000);
+        };
+
+        // File Upload Handlers
+        const setupDropzone = (id, fileInputId, isERP) => {
+            const dropzone = document.getElementById(id);
+            const input = document.getElementById(fileInputId);
             
-            if (type === 'success') {
-                notifArea.classList.add('bg-emerald-500/10', 'border-emerald-500/20', 'text-emerald-400');
-                notifArea.innerHTML = `
-                    <i class="fa-solid fa-circle-check text-lg"></i>
-                    <span class="text-xs font-semibold">${message}</span>
-                `;
-            } else if (type === 'error') {
-                notifArea.classList.add('bg-red-500/10', 'border-red-500/20', 'text-red-400');
-                notifArea.innerHTML = `
-                    <i class="fa-solid fa-circle-xmark text-lg"></i>
-                    <span class="text-xs font-semibold">${message}</span>
-                `;
-            } else {
-                notifArea.classList.add('bg-amber-500/10', 'border-amber-500/20', 'text-amber-400');
-                notifArea.innerHTML = `
-                    <i class="fa-solid fa-triangle-exclamation text-lg"></i>
-                    <span class="text-xs font-semibold">${message}</span>
-                `;
-            }
-            
-            notifArea.classList.remove('hidden');
-            setTimeout(() => {
-                notifArea.classList.add('hidden');
-            }, 6000);
-        }
+            dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('border-brand-500', 'bg-slate-900/80'); });
+            dropzone.addEventListener('dragleave', () => dropzone.classList.remove('border-brand-500', 'bg-slate-900/80'));
+            dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('border-brand-500'); if(e.dataTransfer.files.length) processFile(e.dataTransfer.files[0], isERP); });
+            input.addEventListener('change', e => { if(e.target.files.length) processFile(e.target.files[0], isERP); });
+        };
+        setupDropzone('dropzoneERP', 'fileERP', true);
+        setupDropzone('dropzoneDJP', 'fileDJP', false);
 
-        // --- TAB NAVIGATION SWITCHING ---
-        function setupTabs() {
-            const tabRecon = document.getElementById('tabRecon');
-            const tabConverter = document.getElementById('tabConverter');
-            const viewReconciliation = document.getElementById('viewReconciliation');
-            const viewConverter = document.getElementById('viewConverter');
-
-            tabRecon.addEventListener('click', () => {
-                tabRecon.className = "py-3.5 px-2 border-b-2 border-brand-500 text-xs font-bold text-white transition-all flex items-center gap-2";
-                tabConverter.className = "py-3.5 px-2 border-b-2 border-transparent text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-2";
-                viewReconciliation.classList.remove('hidden');
-                viewConverter.classList.add('hidden');
-            });
-
-            tabConverter.addEventListener('click', () => {
-                tabConverter.className = "py-3.5 px-2 border-b-2 border-brand-500 text-xs font-bold text-white transition-all flex items-center gap-2";
-                tabRecon.className = "py-3.5 px-2 border-b-2 border-transparent text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-2";
-                viewReconciliation.classList.add('hidden');
-                viewConverter.classList.remove('hidden');
-            });
-        }
-
-        // --- INITIAL SETUP & EVENT LISTENERS ---
-        document.addEventListener('DOMContentLoaded', () => {
-            setupTabs();
-            
-            setupFileHandlers('fileERP', 'dropzoneERP', 'ERP');
-            setupFileHandlers('fileDJP', 'dropzoneDJP', 'DJP');
-            setupConverterHandlers();
-            
-            document.getElementById('btnLoadDummy').addEventListener('click', injectDummyData);
-            document.getElementById('btnProcess').addEventListener('click', runReconciliation);
-            document.getElementById('btnExport').addEventListener('click', exportToExcel);
-            document.getElementById('btnClearLog').addEventListener('click', () => {
-                document.getElementById('logConsole').innerHTML = '<div class="text-slate-500">&gt; Konsol dibersihkan. Siap memproses...</div>';
-            });
-
-            // Table Filter & Search Listeners
-            document.getElementById('tableSearch').addEventListener('input', handleTableFilter);
-            document.getElementById('statusFilter').addEventListener('change', handleTableFilter);
-            
-            // Pagination Listeners
-            document.getElementById('btnPrevPage').addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderTable(); } });
-            document.getElementById('btnNextPage').addEventListener('click', () => { if (currentPage * rowsPerPage < filteredData.length) { currentPage++; renderTable(); } });
-        });
-
-        // --- FILE DRAG & DROP & PARSE HANDLERS ---
-        function setupFileHandlers(inputId, dropzoneId, source) {
-            const fileInput = document.getElementById(inputId);
-            const dropzone = document.getElementById(dropzoneId);
-
-            dropzone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropzone.classList.add('border-brand-500', 'bg-slate-900/80');
-            });
-
-            dropzone.addEventListener('dragleave', () => {
-                dropzone.classList.remove('border-brand-500', 'bg-slate-900/80');
-            });
-
-            dropzone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropzone.classList.remove('border-brand-500', 'bg-slate-900/80');
-                if (e.dataTransfer.files.length > 0) {
-                    processFile(e.dataTransfer.files[0], source);
-                }
-            });
-
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    processFile(e.target.files[0], source);
-                }
-            });
-        }
-
-        // Parsing Excel/CSV using PapaParse / SheetJS
-        function processFile(file, source) {
+        // Process File Wrapper
+        const processFile = (file, isERP) => {
             if (!file) return;
+            writeLog(`Membaca berkas: ${file.name}...`);
+            const ext = file.name.split('.').pop().toLowerCase();
             
-            writeLog(`Membaca berkas ${source}: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)...`);
-            
-            const extension = file.name.split('.').pop().toLowerCase();
-            
-            if (extension === 'csv') {
-                // Fast streaming CSV Parser for maximum performance
-                Papa.parse(file, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        const jsonRaw = results.data;
-                        if (jsonRaw.length === 0) {
-                            showNotification(`Berkas ${source} kosong atau tidak valid!`, 'error');
-                            return;
-                        }
-                        const cols = results.meta.fields;
-                        handleParsedData(jsonRaw, cols, file.name, source);
-                    },
-                    error: function(err) {
-                        writeLog(`Gagal memparsing CSV ${source}: ${err.message}`, 'error');
-                    }
-                });
+            if (ext === 'csv') {
+                Papa.parse(file, { header: true, skipEmptyLines: true, complete: res => handleParsed(res.data, res.meta.fields, file.name, isERP) });
             } else {
-                // Excel XLSX/XLS parser
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array', cellDates: false });
-                        const firstSheetName = workbook.SheetNames[0];
-                        const worksheet = workbook.Sheets[firstSheetName];
-                        const jsonRaw = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-                        
-                        if (jsonRaw.length === 0) {
-                            throw new Error("Excel tidak memiliki baris data yang valid.");
-                        }
-                        const cols = Object.keys(jsonRaw[0]);
-                        handleParsedData(jsonRaw, cols, file.name, source);
-                    } catch (err) {
-                        writeLog(`Gagal memproses berkas Excel ${source}: ${err.message}`, 'error');
-                        showNotification(`Gagal memproses berkas: ${err.message}`, 'error');
-                    }
+                reader.onload = e => {
+                    const data = new Uint8Array(e.target.result);
+                    // Use xlsx-js-style library (Drop-in replacement for reading)
+                    const wb = XLSX.read(data, { type: 'array', cellDates: false });
+                    const ws = wb.Sheets[wb.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(ws, { defval: "" }); // preserve empty strings, prevents structure shifts
+                    handleParsed(json, Object.keys(json[0] || {}), file.name, isERP);
                 };
                 reader.readAsArrayBuffer(file);
             }
-        }
+        };
 
-        function handleParsedData(jsonRaw, cols, filename, source) {
-            if (source === 'ERP') {
-                rawErpData = jsonRaw;
-                erpColumns = cols;
+        const handleParsed = (data, cols, filename, isERP) => {
+            if (isERP) {
+                rawErpData = data; erpColumns = cols;
                 document.getElementById('nameERP').textContent = filename;
-                document.getElementById('rowsERP').textContent = `${jsonRaw.length.toLocaleString('id-ID')} Baris`;
+                document.getElementById('rowsERP').textContent = `${data.length.toLocaleString('id-ID')} Baris`;
                 document.getElementById('statusERP').classList.remove('hidden');
-                writeLog(`Sukses mengurai ${jsonRaw.length} baris dari ERP.`, 'success');
+                writeLog(`ERP dimuat: ${data.length} baris.`, 'success');
             } else {
-                rawDjpData = jsonRaw;
-                djpColumns = cols;
+                rawDjpData = data; djpColumns = cols;
                 document.getElementById('nameDJP').textContent = filename;
-                document.getElementById('rowsDJP').textContent = `${jsonRaw.length.toLocaleString('id-ID')} Baris`;
+                document.getElementById('rowsDJP').textContent = `${data.length.toLocaleString('id-ID')} Baris`;
                 document.getElementById('statusDJP').classList.remove('hidden');
-                writeLog(`Sukses mengurai ${jsonRaw.length} baris dari DJP.`, 'success');
+                writeLog(`DJP A2 dimuat: ${data.length} baris.`, 'success');
             }
-            checkAndInitializeMapping();
-        }
+            if (rawErpData.length && rawDjpData.length) initMapping();
+        };
 
-        // --- EXCEL TO CSV CONVERTER UTILS ---
-        function setupConverterHandlers() {
-            const dropzone = document.getElementById('dropzoneConv');
-            const fileInput = document.getElementById('fileConv');
-            const selectSheet = document.getElementById('convSheetSelect');
-            const btnConvert = document.getElementById('btnStartConvert');
-
-            dropzone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropzone.classList.add('border-brand-500', 'bg-slate-900/80');
-            });
-
-            dropzone.addEventListener('dragleave', () => {
-                dropzone.classList.remove('border-brand-500', 'bg-slate-900/80');
-            });
-
-            dropzone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropzone.classList.remove('border-brand-500', 'bg-slate-900/80');
-                if (e.dataTransfer.files.length > 0) {
-                    loadConverterFile(e.dataTransfer.files[0]);
-                }
-            });
-
-            fileInput.addEventListener('change', () => {
-                if (fileInput.files.length > 0) {
-                    loadConverterFile(fileInput.files[0]);
-                }
-            });
-
-            btnConvert.addEventListener('click', executeCsvConversion);
-        }
-
-        function loadConverterFile(file) {
-            if (!file) return;
-
-            const infoBox = document.getElementById('convFileInfo');
-            const selectSheet = document.getElementById('convSheetSelect');
-            const btnConvert = document.getElementById('btnStartConvert');
-            const progArea = document.getElementById('convProgressArea');
-
-            infoBox.innerHTML = `
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-file-excel text-emerald-400"></i>
-                    <span class="text-xs text-slate-300 font-semibold">${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
-                </div>
-            `;
-            progArea.classList.remove('hidden');
-            updateConvProgress(30, "Membaca header dan sheet...");
-
-            converterFileName = file.name.substring(0, file.name.lastIndexOf('.'));
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    updateConvProgress(60, "Membaca workbook...");
-                    
-                    converterWorkbook = XLSX.read(data, { type: 'array', bookSheets: true });
-                    
-                    selectSheet.innerHTML = '';
-                    converterWorkbook.SheetNames.forEach(name => {
-                        const opt = document.createElement('option');
-                        opt.value = name;
-                        opt.textContent = name;
-                        selectSheet.appendChild(opt);
-                    });
-
-                    selectSheet.disabled = false;
-                    btnConvert.disabled = false;
-
-                    updateConvProgress(100, "Workbook siap dikonversi.");
-                    showNotification("Berhasil membaca file Excel. Silakan pilih sheet dan klik konversi.", "success");
-                } catch (err) {
-                    infoBox.textContent = `Error: ${err.message}`;
-                    updateConvProgress(0, "Gagal memproses.");
-                    showNotification("Gagal membaca struktur Excel.", "error");
-                }
+        // Auto Mapping Logic
+        const initMapping = () => {
+            document.getElementById('sectionMapping').classList.remove('hidden');
+            const populate = (id, cols, keywords) => {
+                const select = document.getElementById(id);
+                select.innerHTML = '<option value="">-- Pilih Kolom --</option>';
+                let match = "";
+                cols.forEach(c => {
+                    select.add(new Option(c, c));
+                    if (!match && keywords.some(k => c.toLowerCase().includes(k))) match = c;
+                });
+                if (match) select.value = match;
             };
-            reader.readAsArrayBuffer(file);
-        }
+            populate('mapErpInvoice', erpColumns, ['no tax', 'invoice', 'faktur']);
+            populate('mapErpPpn', erpColumns, ['ppn', 'vat', 'pajak']);
+            populate('mapDjpInvoice', djpColumns, ['faktur', 'nomor faktur']);
+            populate('mapDjpPpn', djpColumns, ['vat', 'ppn', 'pajak']);
+            document.getElementById('sectionMapping').scrollIntoView({ behavior: 'smooth' });
+        };
 
-        function updateConvProgress(percent, text) {
-            document.getElementById('convProgressBar').style.width = `${percent}%`;
-            document.getElementById('convProgressPercent').textContent = `${percent}%`;
-            document.getElementById('convProgressTxt').textContent = text;
-        }
+        // Run Worker
+        document.getElementById('btnProcess').addEventListener('click', () => {
+            const erpInv = document.getElementById('mapErpInvoice').value;
+            const erpPpn = document.getElementById('mapErpPpn').value;
+            const djpInv = document.getElementById('mapDjpInvoice').value;
+            const djpPpn = document.getElementById('mapDjpPpn').value;
 
-        function executeCsvConversion() {
-            if (!converterWorkbook) return;
+            if (!erpInv || !erpPpn || !djpInv || !djpPpn) return showNotif("Pemetaan kolom belum lengkap!", "error");
 
-            const selectedSheetName = document.getElementById('convSheetSelect').value;
-            const fileInput = document.getElementById('fileConv');
-            const file = fileInput.files[0];
-
-            updateConvProgress(20, "Mengekstrak baris data...");
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    updateConvProgress(50, "Menguraikan sheet terpilih...");
-                    
-                    const fullWorkbook = XLSX.read(data, { type: 'array', sheets: selectedSheetName });
-                    const sheet = fullWorkbook.Sheets[selectedSheetName];
-                    
-                    updateConvProgress(80, "Memformat data ke CSV...");
-                    const csvContent = XLSX.utils.sheet_to_csv(sheet, { FS: ",", RS: "\n" });
-
-                    updateConvProgress(95, "Mengunduh berkas...");
-                    
-                    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-                    const downloadUrl = URL.createObjectURL(blob);
-                    
-                    const a = document.createElement('a');
-                    a.href = downloadUrl;
-                    a.download = `${converterFileName}_${selectedSheetName.replace(/[^A-Za-z0-9]/g, '_')}.csv`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(downloadUrl);
-
-                    updateConvProgress(100, "Ekspor CSV berhasil!");
-                    showNotification("Konversi selesai! Berkas CSV terunduh otomatis.", "success");
-                } catch (err) {
-                    updateConvProgress(0, "Gagal.");
-                    showNotification("Proses konversi gagal: " + err.message, "error");
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        // --- AUTOPREFILL COLUMN MAPPINGS ---
-        function checkAndInitializeMapping() {
-            if (rawErpData.length > 0 && rawDjpData.length > 0) {
-                document.getElementById('sectionMapping').classList.remove('hidden');
-                
-                // Prefill mapping sesuai PRD baru
-                populateDropdown('mapErpInvoice', erpColumns, ['no tax', 'notax', 'invoice', 'no. tax', 'faktur', 'no_tax']);
-                populateDropdown('mapErpPpn', erpColumns, ['ppn', 'vat', 'pajak', 'nominal ppn', 'nominal_ppn', 'ppn rupiah']);
-                
-                populateDropdown('mapDjpInvoice', djpColumns, ['nomor faktur', 'nomorfaktur', 'no. faktur', 'faktur', 'nomor_faktur']);
-                populateDropdown('mapDjpPpn', djpColumns, ['vat', 'ppn', 'nominal vat', 'nominal_vat', 'pajak']);
-
-                writeLog("Kolom PPN & Faktur dipetakan otomatis berdasarkan nama terdekat. Silakan verifikasi.", "warning");
-                document.getElementById('sectionMapping').scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        function populateDropdown(selectId, columns, keywords) {
-            const select = document.getElementById(selectId);
-            select.innerHTML = '<option value="">-- Pilih Kolom --</option>';
-            
-            let matchedValue = "";
-            columns.forEach(col => {
-                const opt = document.createElement('option');
-                opt.value = col;
-                opt.textContent = col;
-                select.appendChild(opt);
-
-                const normalizedCol = col.toLowerCase().trim();
-                if (!matchedValue) {
-                    keywords.forEach(keyword => {
-                        if (normalizedCol === keyword || normalizedCol.includes(keyword)) {
-                            matchedValue = col;
-                        }
-                    });
-                }
-            });
-
-            if (matchedValue) {
-                select.value = matchedValue;
-            }
-        }
-
-        // --- CORE RECONCILIATION PROCESS WITH WEB WORKER ---
-        function runReconciliation() {
-            const erpInvoiceCol = document.getElementById('mapErpInvoice').value;
-            const erpPpnCol = document.getElementById('mapErpPpn').value;
-            const djpInvoiceCol = document.getElementById('mapDjpInvoice').value;
-            const djpPpnCol = document.getElementById('mapDjpPpn').value;
-
-            if (!erpInvoiceCol || !erpPpnCol || !djpInvoiceCol || !djpPpnCol) {
-                showNotification("Seluruh pemetaan kolom wajib diisi!", "error");
-                return;
-            }
-
-            const sectionProgress = document.getElementById('sectionProgress');
-            const sectionDashboard = document.getElementById('sectionDashboard');
-            
-            sectionProgress.classList.remove('hidden');
-            sectionDashboard.classList.add('hidden');
-            
-            const progressBar = document.getElementById('progressBar');
-            const progressPercent = document.getElementById('progressPercent');
-            const progressStatus = document.getElementById('progressStatus');
-
-            progressBar.style.width = "10%";
-            progressPercent.textContent = "10%";
-            progressStatus.textContent = "Menginisialisasi Web Worker pencocokan...";
-
-            writeLog("Membuat sandbox pemrosesan luring (offline Web Worker)...");
-
-            // Build Inline Worker blob
+            document.getElementById('sectionProgress').classList.remove('hidden');
             const blob = new Blob([document.getElementById('recon-worker').textContent], { type: 'text/javascript' });
             const worker = new Worker(URL.createObjectURL(blob));
 
-            // Send payload to Worker
             worker.postMessage({
-                erpRaw: rawErpData,
-                djpRaw: rawDjpData,
-                erpMap: { invoice: erpInvoiceCol, ppn: erpPpnCol },
-                djpMap: { invoice: djpInvoiceCol, ppn: djpPpnCol }
+                erpRaw: rawErpData, djpRaw: rawDjpData,
+                erpMap: { invoice: erpInv, ppn: erpPpn },
+                djpMap: { invoice: djpInv, ppn: djpPpn }
             });
 
-            // Handle Worker callback message
-            worker.onmessage = function(e) {
-                const data = e.data;
-                if (data.type === 'status') {
-                    progressStatus.textContent = data.msg;
-                    const currentPct = parseInt(progressBar.style.width) || 10;
-                    const nextPct = Math.min(currentPct + 15, 90);
-                    progressBar.style.width = `${nextPct}%`;
-                    progressPercent.textContent = `${nextPct}%`;
-                } else if (data.type === 'done') {
-                    progressBar.style.width = "100%";
-                    progressPercent.textContent = "100%";
-                    progressStatus.textContent = "Proses pencocokan selesai!";
+            worker.onmessage = e => {
+                if (e.data.type === 'status') {
+                    document.getElementById('progressStatus').textContent = e.data.msg;
+                    let pct = parseInt(document.getElementById('progressBar').style.width) || 10;
+                    pct = Math.min(pct + 20, 95);
+                    document.getElementById('progressBar').style.width = pct + "%";
+                    document.getElementById('progressPercent').textContent = pct + "%";
+                } else if (e.data.type === 'done') {
+                    document.getElementById('progressBar').style.width = "100%";
+                    document.getElementById('progressPercent').textContent = "100%";
+                    
+                    finalReportDataERP = e.data.sheet1Rows;
+                    finalReportDataA2 = e.data.sheet2Rows;
+                    finalMetrics = e.data.metrics;
 
-                    finalReportData = data.results;
-                    filteredData = [...finalReportData];
-                    finalMetrics = data.metrics;
-
-                    renderSummaryDashboard();
-                    renderTable();
-                    renderTopDiscrepancies();
-
+                    renderDashboard();
                     setTimeout(() => {
-                        sectionProgress.classList.add('hidden');
-                        sectionDashboard.classList.remove('hidden');
-                        showNotification("Rekonsiliasi PPN selesai dihitung secara akurat!", "success");
-                        writeLog(`Pencocokan sukses diselesaikan. Menghasilkan ${finalReportData.length.toLocaleString()} total data audit.`, "success");
-                        sectionDashboard.scrollIntoView({ behavior: 'smooth' });
-                    }, 400);
+                        document.getElementById('sectionProgress').classList.add('hidden');
+                        document.getElementById('sectionDashboard').classList.remove('hidden');
+                        document.getElementById('sectionDashboard').scrollIntoView({ behavior: 'smooth' });
+                        writeLog("Reconciliation Engine selesai tanpa merusak struktur asli data.", "success");
+                    }, 500);
                 }
             };
+        });
 
-            worker.onerror = function(err) {
-                progressBar.style.width = "0%";
-                progressPercent.textContent = "0%";
-                progressStatus.textContent = "Terjadi kegagalan rekon!";
-                showNotification("Worker crash: " + err.message, "error");
-                writeLog("Error di dalam Web Worker: " + err.message, "error");
-            };
-        }
+        // Dashboard Renderer
+        const renderDashboard = () => {
+            document.getElementById('statMatched').textContent = finalMetrics.cMatch.toLocaleString('id-ID');
+            document.getElementById('statSelisih').textContent = finalMetrics.cSelisih.toLocaleString('id-ID');
+            document.getElementById('statMissing').textContent = (finalMetrics.cMissA2 + finalMetrics.cMissErp).toLocaleString('id-ID');
+            document.getElementById('statDuplicate').textContent = finalMetrics.cDup.toLocaleString('id-ID');
 
-        // --- DASHBOARD METRICS RENDERER ---
-        function renderSummaryDashboard() {
-            document.getElementById('statTotalErp').textContent = `Rp ${finalMetrics.totalErpPpn.toLocaleString('id-ID')}`;
-            document.getElementById('statTotalDjp').textContent = `Rp ${finalMetrics.totalDjpVat.toLocaleString('id-ID')}`;
-            document.getElementById('statSelisihFinal').textContent = `Rp ${finalMetrics.totalSelisihFinal.toLocaleString('id-ID')}`;
-            document.getElementById('statMatchRate').textContent = `${finalMetrics.matchRate.toFixed(2)}%`;
-            document.getElementById('statTotalProcessed').textContent = `${finalMetrics.totalProcessed.toLocaleString('id-ID')} Baris`;
-            document.getElementById('statReturExcluded').textContent = `${finalMetrics.returExcludedCount.toLocaleString('id-ID')} Retur Disaring Otomatis`;
-
-            document.getElementById('subMatched').textContent = finalMetrics.countMatched.toLocaleString('id-ID');
-            document.getElementById('subSelisih').textContent = finalMetrics.countSelisihData.toLocaleString('id-ID');
-            document.getElementById('subMissingDjp').textContent = finalMetrics.countMissingDjp.toLocaleString('id-ID');
-            document.getElementById('subMissingErp').textContent = finalMetrics.countMissingErp.toLocaleString('id-ID');
-            document.getElementById('subDuplicateErp').textContent = finalMetrics.countDuplicateErp.toLocaleString('id-ID');
-
-            // Render SVG Arcs based on metrics
-            const total = finalMetrics.totalProcessed || 1;
-            const pctMatched = (finalMetrics.countMatched / total) * 100;
-            const pctSelisih = (finalMetrics.countSelisihData / total) * 100;
-            const pctMissing = ((finalMetrics.countMissingDjp + finalMetrics.countMissingErp + finalMetrics.countDuplicateErp) / total) * 100;
-
-            document.getElementById('pctMatched').textContent = `${pctMatched.toFixed(1)}%`;
-            document.getElementById('pctSelisih').textContent = `${pctSelisih.toFixed(1)}%`;
-            document.getElementById('pctMissing').textContent = `${pctMissing.toFixed(1)}%`;
-
-            // Draw SVG pie arcs
-            const circleLength = 251.2; // 2 * pi * 40
-            const strokeMatched = (pctMatched / 100) * circleLength;
-            const strokeSelisih = (pctSelisih / 100) * circleLength;
-            const strokeMissing = (pctMissing / 100) * circleLength;
-
-            const matchedArc = document.getElementById('svgMatchedArc');
-            const selisihArc = document.getElementById('svgSelisihArc');
-            const missingArc = document.getElementById('svgMissingArc');
-
-            matchedArc.setAttribute('stroke-dasharray', `${strokeMatched} ${circleLength}`);
-            selisihArc.setAttribute('stroke-dasharray', `${strokeSelisih} ${circleLength}`);
-            missingArc.setAttribute('stroke-dasharray', `${strokeMissing} ${circleLength}`);
-
-            // Offset arcs
-            selisihArc.setAttribute('stroke-dashoffset', `-${strokeMatched}`);
-            missingArc.setAttribute('stroke-dashoffset', `-${strokeMatched + strokeSelisih}`);
-        }
-
-        // --- TOP 20 DISCREPANCIES VIEW ---
-        function renderTopDiscrepancies() {
-            const tbody = document.getElementById('topVarianceBody');
+            // Render Preview Table (Top 50)
+            const tbody = document.getElementById('tableBodyPreview');
             tbody.innerHTML = '';
+            
+            const erpInv = document.getElementById('mapErpInvoice').value;
+            const erpPpn = document.getElementById('mapErpPpn').value;
 
-            const selisihList = finalReportData
-                .filter(item => item.status === 'SELISIH_PPN')
-                .sort((a, b) => Math.abs(b.selisih) - Math.abs(a.selisih))
-                .slice(0, 20);
+            finalReportDataERP.slice(0, 50).forEach((row, i) => {
+                let badge = 'status-missing';
+                if(row.STATUS_MATCH === 'MATCH') badge = 'status-match';
+                if(row.STATUS_MATCH === 'SELISIH') badge = 'status-selisih';
+                if(row.STATUS_MATCH === 'DUPLICATE') badge = 'status-duplicate';
+                if(row.STATUS_MATCH === 'EXCLUDED_RETUR') badge = 'status-retur';
 
-            if (selisihList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-500 italic">Tidak ditemukan selisih nominal</td></tr>`;
-                return;
-            }
-
-            selisihList.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.className = "border-b border-slate-900/60 hover:bg-slate-900/30 transition-all";
-                tr.innerHTML = `
-                    <td class="py-2 text-slate-300 font-bold">${row.key8}</td>
-                    <td class="py-2 text-slate-400 truncate max-w-[180px]">${row.erpInvoice}</td>
-                    <td class="py-2 text-right text-slate-300">Rp ${row.erpPpn.toLocaleString('id-ID')}</td>
-                    <td class="py-2 text-right text-slate-300">Rp ${row.djpVat.toLocaleString('id-ID')}</td>
-                    <td class="py-2 text-right font-extrabold text-rose-400">Rp ${row.selisih.toLocaleString('id-ID')}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // --- FILTER, SORT & RENDER FOR DATA TABLE ---
-        function handleTableFilter() {
-            const searchQuery = document.getElementById('tableSearch').value.toLowerCase().trim();
-            const selectedStatus = document.getElementById('statusFilter').value;
-
-            filteredData = finalReportData.filter(item => {
-                if (selectedStatus !== 'ALL' && item.status !== selectedStatus) {
-                    return false;
-                }
-                if (searchQuery) {
-                    const matchInvoice = item.erpInvoice.toLowerCase().includes(searchQuery) || item.djpInvoice.toLowerCase().includes(searchQuery);
-                    const matchKey = item.key8.includes(searchQuery);
-                    return matchInvoice || matchKey;
-                }
-                return true;
-            });
-
-            currentPage = 1;
-            renderTable();
-        }
-
-        function sortTable(column, toggleDir = true) {
-            if (toggleDir) {
-                if (currentSortColumn === column) {
-                    currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-                } else {
-                    currentSortColumn = column;
-                    currentSortDirection = 'asc';
-                }
-            }
-
-            filteredData.sort((a, b) => {
-                let valA = a[column];
-                let valB = b[column];
-
-                if (typeof valA === 'string') {
-                    return currentSortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
-                } else {
-                    return currentSortDirection === 'asc' ? valA - valB : valB - valA;
-                }
-            });
-
-            renderTable();
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-
-            const totalRows = filteredData.length;
-            const startIndex = (currentPage - 1) * rowsPerPage;
-            const endIndex = Math.min(startIndex + rowsPerPage, totalRows);
-
-            if (totalRows === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="9" class="p-8 text-center text-slate-500 italic">
-                            Tidak ada rincian data pencocokan yang sesuai dengan filter Anda.
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-900/50">
+                        <td class="p-3 text-slate-500">${i+1}</td>
+                        <td class="p-3 truncate max-w-[150px]">${row[erpInv]}</td>
+                        <td class="p-3 text-right">Rp ${(row[erpPpn] || 0).toLocaleString('id-ID')}</td>
+                        
+                        <td class="p-3 font-bold text-brand-300 bg-brand-500/5">${row.KEY_8_DIGIT || '-'}</td>
+                        <td class="p-3 text-right font-semibold text-brand-300 bg-brand-500/5">Rp ${(row.VAT_A2 || 0).toLocaleString('id-ID')}</td>
+                        <td class="p-3 bg-brand-500/5">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badge}">${row.STATUS_MATCH}</span>
                         </td>
+                        <td class="p-3 text-right font-bold bg-brand-500/5 ${row.SELISIH_PPN !== 0 ? 'text-rose-400' : 'text-slate-400'}">Rp ${(row.SELISIH_PPN || 0).toLocaleString('id-ID')}</td>
+                        <td class="p-3 text-[10px] font-bold bg-brand-500/5 ${row.DUPLICATE_STATUS === 'DUPLICATE' ? 'text-amber-400' : 'text-slate-500'}">${row.DUPLICATE_STATUS}</td>
+                        <td class="p-3 text-[10px] bg-brand-500/5 text-slate-300 truncate max-w-[200px]" title="${row.KETERANGAN}">${row.KETERANGAN}</td>
                     </tr>
                 `;
-                document.getElementById('tableInfo').textContent = "Menampilkan 0 dari 0 data transaksi";
-                document.getElementById('btnPrevPage').disabled = true;
-                document.getElementById('btnNextPage').disabled = true;
-                return;
-            }
-
-            const pageData = filteredData.slice(startIndex, endIndex);
-
-            pageData.forEach((row, idx) => {
-                const globalIndex = startIndex + idx + 1;
-                let badgeClass = 'status-badge-missing';
-                
-                if (row.status === 'MATCH') badgeClass = 'status-badge-match';
-                else if (row.status === 'SELISIH_PPN') badgeClass = 'status-badge-selisih';
-                else if (row.status === 'DUPLICATE_ERP') badgeClass = 'status-badge-duplicate';
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-900/40 transition-colors border-b border-slate-900/60";
-                
-                tr.innerHTML = `
-                    <td class="p-3 text-center text-slate-500">${globalIndex}</td>
-                    <td class="p-3">
-                        <span class="px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${badgeClass}">${row.status}</span>
-                    </td>
-                    <td class="p-3 font-semibold text-slate-200 select-all">${row.key8}</td>
-                    <td class="p-3 text-slate-400 select-all">${row.erpInvoice}</td>
-                    <td class="p-3 text-slate-400 select-all">${row.djpInvoice}</td>
-                    <td class="p-3 text-right text-slate-300">Rp ${row.erpPpn.toLocaleString('id-ID')}</td>
-                    <td class="p-3 text-right text-slate-300">Rp ${row.djpVat.toLocaleString('id-ID')}</td>
-                    <td class="p-3 text-right font-extrabold ${row.selisih !== 0 ? 'text-rose-400' : 'text-slate-500'}">Rp ${row.selisih.toLocaleString('id-ID')}</td>
-                    <td class="p-3 text-[11px] text-slate-400 max-w-xs truncate" title="${row.keterangan}">${row.keterangan}</td>
-                `;
-                tbody.appendChild(tr);
             });
+        };
 
-            const totalPages = Math.ceil(totalRows / rowsPerPage);
-            document.getElementById('tableInfo').textContent = `Menampilkan ${startIndex + 1}-${endIndex} dari ${totalRows.toLocaleString('id-ID')} data transaksi`;
-            document.getElementById('pageNumbers').textContent = `Halaman ${currentPage} dari ${totalPages || 1}`;
-            
-            document.getElementById('btnPrevPage').disabled = currentPage === 1;
-            document.getElementById('btnNextPage').disabled = currentPage >= totalPages;
-        }
-
-        // --- STYLED INTERACTIVE MULTI-SHEET EXCEL EXPORT (PRD VISUAL STANDARD) ---
-        function exportToExcel() {
-            if (finalReportData.length === 0) {
-                showNotification("Harap jalankan pencocokan data terlebih dahulu!", "error");
-                return;
-            }
-
-            writeLog("Mengekspor laporan visual audit ke Excel...");
-
-            const wb = XLSX.utils.book_new();
-
-            // 1. SUMMARY SHEET
-            const summaryRows = [
-                { "Metrik Pajak & PPN": "Total ERP PPN (Ekskl. Retur)", "Nilai Final": finalMetrics.totalErpPpn },
-                { "Metrik Pajak & PPN": "Total DJP VAT (Ekskl. Retur)", "Nilai Final": finalMetrics.totalDjpVat },
-                { "Metrik Pajak & PPN": "Total Selisih Final PPN (Variance)", "Nilai Final": finalMetrics.totalSelisihFinal },
-                { "Metrik Pajak & PPN": "Match Rate Akurasi PPN", "Nilai Final": `${finalMetrics.matchRate.toFixed(2)}%` },
-                { "Metrik Pajak & PPN": "Total Faktur Diproses (Excl. Retur)", "Nilai Final": finalMetrics.totalProcessed },
-                { "Metrik Pajak & PPN": "Total Data Matched", "Nilai Final": finalMetrics.countMatched },
-                { "Metrik Pajak & PPN": "Total Selisih Nominal PPN", "Nilai Final": finalMetrics.countSelisihData },
-                { "Metrik Pajak & PPN": "Total Missing DJP", "Nilai Final": finalMetrics.countMissingDjp },
-                { "Metrik Pajak & PPN": "Total Missing ERP", "Nilai Final": finalMetrics.countMissingErp },
-                { "Metrik Pajak & PPN": "Total Duplicate ERP", "Nilai Final": finalMetrics.countDuplicateErp },
-                { "Metrik Pajak & PPN": "Total Retur Disaring Otomatis", "Nilai Final": finalMetrics.returExcludedCount }
-            ];
-            const wsSummary = XLSX.utils.json_to_sheet(summaryRows);
-            wsSummary['!cols'] = [{ wch: 35 }, { wch: 22 }];
-            XLSX.utils.book_append_sheet(wb, wsSummary, "SUMMARY");
-
-            // Categorized sheet data as specified in PRD
-            const categories = {
-                'MATCHED': [],
-                'SELISIH_PPN': [],
-                'MISSING_DJP': [],
-                'MISSING_ERP': [],
-                'DUPLICATE_ERP': []
-            };
-
-            finalReportData.forEach(item => {
-                const formatted = {
-                    'KEY_8_DIGIT': item.key8,
-                    'ERP_NO_TAX': item.erpInvoice,
-                    'DJP_FAKTUR': item.djpInvoice,
-                    'ERP_PPN': item.erpPpn,
-                    'DJP_VAT': item.djpVat,
-                    'SELISIH': item.selisih,
-                    'CATATAN_AUDIT': item.keterangan
-                };
-
-                if (item.status === 'MATCH') categories['MATCHED'].push(formatted);
-                else if (item.status === 'SELISIH_PPN') categories['SELISIH_PPN'].push(formatted);
-                else if (item.status === 'MISSING_DJP') categories['MISSING_DJP'].push(formatted);
-                else if (item.status === 'MISSING_ERP') categories['MISSING_ERP'].push(formatted);
-                else if (item.status === 'DUPLICATE_ERP') categories['DUPLICATE_ERP'].push(formatted);
-            });
-
-            // Write all sheets to Workbook
-            Object.keys(categories).forEach(sheetName => {
-                const rows = categories[sheetName];
-                const ws = XLSX.utils.json_to_sheet(rows);
-                ws['!cols'] = [
-                    { wch: 15 }, // KEY_8_DIGIT
-                    { wch: 22 }, // ERP_NO_TAX
-                    { wch: 22 }, // DJP_FAKTUR
-                    { wch: 15 }, // ERP_PPN
-                    { wch: 15 }, // DJP_VAT
-                    { wch: 15 }, // SELISIH
-                    { wch: 45 }  // CATATAN_AUDIT
-                ];
-                // Active auto-filters and freeze top row
-                ws['!autofilter'] = { ref: `A1:G${Math.max(rows.length + 1, 2)}` };
-                ws['!views'] = [{ state: "frozen", ySplit: 1 }];
-                XLSX.utils.book_append_sheet(wb, ws, sheetName);
-            });
-
-            // TOP SELISIH SHEET
-            const topRows = finalReportData
-                .filter(item => item.status === 'SELISIH_PPN')
-                .sort((a, b) => Math.abs(b.selisih) - Math.abs(a.selisih))
-                .slice(0, 20)
-                .map(item => ({
-                    'KEY_8_DIGIT': item.key8,
-                    'ERP_NO_TAX': item.erpInvoice,
-                    'DJP_FAKTUR': item.djpInvoice,
-                    'ERP_PPN': item.erpPpn,
-                    'DJP_VAT': item.djpVat,
-                    'SELISIH': item.selisih,
-                    'URGENSI': 'PRIORITAS UTAMA AUDIT'
-                }));
-            
-            const wsTop = XLSX.utils.json_to_sheet(topRows);
-            wsTop['!cols'] = [{ wch: 15 }, { wch: 22 }, { wch: 22 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
-            wsTop['!views'] = [{ state: "frozen", ySplit: 1 }];
-            XLSX.utils.book_append_sheet(wb, wsTop, "TOP_SELISIH");
+        // ==============================================================================
+        // THE EXPORT LOGIC (EXCEL WITH STYLING, YELLOW BACKGROUNDS, AUTOFILTERS)
+        // ==============================================================================
+        document.getElementById('btnExport').addEventListener('click', () => {
+            if (!finalReportDataERP.length) return;
+            writeLog("Membangun file Excel dengan styling audit kuning...");
 
             try {
-                const timestamp = new Date().toISOString().slice(0,10);
-                const filename = `Laporan_Rekonsiliasi_PPN_${timestamp}.xlsx`;
+                // xlsx-js-style instance
+                const wb = XLSX.utils.book_new();
+
+                const ws1 = XLSX.utils.json_to_sheet(finalReportDataERP);
+                const ws2 = XLSX.utils.json_to_sheet(finalReportDataA2);
+
+                const appendColsSheet1 = ['KEY_8_DIGIT', 'VAT_A2', 'STATUS_MATCH', 'DUPLICATE_STATUS', 'SELISIH_PPN', 'MATCH_FOUND', 'KETERANGAN'];
+                const appendColsSheet2 = ['KEY_8_DIGIT', 'PPN_ERP', 'STATUS_MATCH', 'DUPLICATE_STATUS', 'SELISIH_PPN', 'MATCH_FOUND', 'KETERANGAN'];
+
+                applyAuditStyling(ws1, finalReportDataERP, appendColsSheet1);
+                applyAuditStyling(ws2, finalReportDataA2, appendColsSheet2);
+
+                XLSX.utils.book_append_sheet(wb, ws1, "REPORT_DATA_ERP");
+                XLSX.utils.book_append_sheet(wb, ws2, "REPORT_DATA_A2");
+
+                const filename = `Cross_Check_Audit_VAT_${new Date().toISOString().slice(0,10)}.xlsx`;
                 XLSX.writeFile(wb, filename);
-                writeLog(`Ekspor sukses: ${filename}`, 'success');
-                showNotification("Berhasil mengekspor Laporan Pajak Multi-Sheet!", "success");
+                
+                showNotif("Sukses Ekspor Laporan Excel!", "success");
+                writeLog(`File berhasil diunduh: ${filename}`, "success");
             } catch (err) {
-                writeLog(`Gagal mengekspor data Excel: ${err.message}`, 'error');
-                showNotification("Gagal mengekspor data.", "error");
+                showNotif("Gagal mengekspor file.", "error");
+                writeLog(`Error export: ${err.message}`, "error");
             }
+        });
+
+        function applyAuditStyling(ws, data, appendedColNames) {
+            if (!data.length) return;
+            
+            // Get original keys array to map column indexes
+            const keys = Object.keys(data[0]); 
+            const range = XLSX.utils.decode_range(ws['!ref']);
+            
+            // Map the exact string column names to their 0-based column index
+            const appendedIndices = appendedColNames.map(name => keys.indexOf(name)).filter(idx => idx !== -1);
+            const statusIdx = keys.indexOf('STATUS_MATCH');
+
+            for (let R = range.s.r; R <= range.e.r; ++R) {
+                let rowStatus = "";
+                if (R > 0 && statusIdx !== -1) {
+                    const stCell = ws[XLSX.utils.encode_cell({c: statusIdx, r: R})];
+                    rowStatus = stCell ? stCell.v : "";
+                }
+
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                    const cellRef = XLSX.utils.encode_cell({c: C, r: R});
+                    if (!ws[cellRef]) continue;
+
+                    // Initialize style object natively for xlsx-js-style
+                    if (!ws[cellRef].s) ws[cellRef].s = {};
+                    
+                    const isAppended = appendedIndices.includes(C);
+
+                    // FIX FOR THE ".0000" DECIMAL ISSUE:
+                    // If the cell contains a number, force Excel to format it without decimal points
+                    if (typeof ws[cellRef].v === 'number') {
+                        ws[cellRef].z = '#,##0';
+                    }
+
+                    if (R === 0) { // Headers
+                        ws[cellRef].s.font = { bold: true, color: { rgb: "FF000000" } };
+                        ws[cellRef].s.border = { 
+                            bottom: { style: "medium", color: { auto: 1 } }
+                        };
+                        
+                        if (isAppended) {
+                            // 100% Solid Yellow Background for appended columns
+                            ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFFFFF00" } };
+                        }
+                    } else { // Data Rows
+                        if (isAppended) {
+                            // Light yellow background for appended data cells to distinguish them
+                            ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFFFFFE0" } };
+                            
+                            // Specific conditional formatting on STATUS_MATCH column
+                            if (C === statusIdx) {
+                                if (rowStatus === 'MATCH') {
+                                    ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFC6EFCE" } };
+                                    ws[cellRef].s.font = { color: { rgb: "FF006100" }, bold: true };
+                                } else if (rowStatus === 'SELISIH') {
+                                    ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFFFC7CE" } };
+                                    ws[cellRef].s.font = { color: { rgb: "FF9C0006" }, bold: true };
+                                } else if (rowStatus.includes('MISSING')) {
+                                    ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFF2F2F2" } };
+                                    ws[cellRef].s.font = { color: { rgb: "FF595959" }, bold: true };
+                                } else if (rowStatus === 'DUPLICATE') {
+                                    ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFFFEB9C" } };
+                                    ws[cellRef].s.font = { color: { rgb: "FF9C6500" }, bold: true };
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Lock top row
+            ws['!views'] = [{ state: "frozen", ySplit: 1 }];
+            // Activate AutoFilter for the entire dataset range
+            ws['!autofilter'] = { ref: ws['!ref'] };
         }
 
-        // --- LOAD LARGE DEMO DUMMY DATA (5.000+ ROWS) ---
-        function injectDummyData() {
-            writeLog("Menyiapkan 5.000+ data transaksi demo untuk stress testing...");
+        // --- DUMMY DATA GENERATOR ---
+        document.getElementById('btnLoadDummy').addEventListener('click', () => {
+            const erp = [], djp = [];
             
-            const erpList = [];
-            const djpList = [];
-
-            // 1. MATCHED: 4.800 data cocok sempurna
-            for (let i = 100001; i <= 104800; i++) {
-                // Skenario format faktur real e-Faktur: 010.025.26.12345678
-                const invoiceNumERP = `040.001.25.${i}`;
-                const invoiceNumDJP = `040.001.25.${i}`;
-                const ppn = Math.round(500000 + (i % 1000) * 1250);
-
-                erpList.push({
-                    "No Tax": invoiceNumERP,
-                    "PPN": ppn
-                });
-
-                djpList.push({
-                    "nomor faktur": invoiceNumDJP,
-                    "vat": ppn
-                });
+            // 1. MATCHED Data (4.800 items)
+            for (let i = 1; i <= 4800; i++) {
+                const inv = `010.000.25.${(10000000 + i)}`;
+                const ppn = 100000 + (i * 100);
+                erp.push({ "No. Bukti": `JRN-${i}`, "Invoice Asli": inv, "Nominal PPN": ppn, "Keterangan": "Sales" });
+                djp.push({ "Tanggal": "2026-05-10", "Nomor Faktur": inv, "Nominal VAT": ppn, "Lawan Transaksi": "PT Budi" });
             }
 
-            // 2. SELISIH NOMINAL: 100 data
-            for (let i = 104801; i <= 104900; i++) {
-                const invoiceNum = `040.001.25.${i}`;
-                const ppnERP = Math.round(500000 + (i % 1000) * 1250);
-                const ppnDJP = ppnERP + (i % 2 === 0 ? 50000 : -100000); // Create discrepancy
-
-                erpList.push({
-                    "No Tax": invoiceNum,
-                    "PPN": ppnERP
-                });
-
-                djpList.push({
-                    "nomor faktur": invoiceNum,
-                    "vat": ppnDJP
-                });
+            // 2. SELISIH Data (100 items)
+            for (let i = 1; i <= 100; i++) {
+                const inv = `010.000.25.${(20000000 + i)}`;
+                erp.push({ "No. Bukti": `JRN-S${i}`, "Invoice Asli": inv, "Nominal PPN": 500000, "Keterangan": "Sales" });
+                djp.push({ "Tanggal": "2026-05-11", "Nomor Faktur": inv, "Nominal VAT": 499000, "Lawan Transaksi": "PT Selisih" });
             }
 
-            // 3. MISSING DJP (Belum Terlapor): 50 data
-            for (let i = 104901; i <= 104950; i++) {
-                const invoiceNum = `040.001.25.${i}`;
-                const ppn = Math.round(400000 + (i % 500) * 2000);
-
-                erpList.push({
-                    "No Tax": invoiceNum,
-                    "PPN": ppn
-                });
+            // 3. RETUR Data (Should be completely ignored in match metrics) (50 items)
+            for (let i = 1; i <= 50; i++) {
+                const inv = `010.000.25.${(30000000 + i)}`;
+                erp.push({ "No. Bukti": `RET-${i}`, "Invoice Asli": inv, "Nominal PPN": -100000, "Keterangan": "Retur Jual" });
+                djp.push({ "Tanggal": "2026-05-12", "Nomor Faktur": inv, "Nominal VAT": -100000, "Lawan Transaksi": "PT Retur" });
             }
 
-            // 4. MISSING ERP (Tidak ada di ERP): 50 data
-            for (let i = 104951; i <= 105000; i++) {
-                const invoiceNum = `040.001.25.${i}`;
-                const ppn = Math.round(300000 + (i % 500) * 2000);
-
-                djpList.push({
-                    "nomor faktur": invoiceNum,
-                    "vat": ppn
-                });
+            // 4. MISSING A2 (50 items)
+            for (let i = 1; i <= 50; i++) {
+                const inv = `010.000.25.${(40000000 + i)}`;
+                erp.push({ "No. Bukti": `JRN-M${i}`, "Invoice Asli": inv, "Nominal PPN": 750000, "Keterangan": "Belum Lapor" });
             }
 
-            // 5. RETUR (Exclusions): 40 Retur transactions
-            for (let i = 1; i <= 20; i++) {
-                // Minus nominal return
-                erpList.push({
-                    "No Tax": `RETUR-ERP-MINUS-${i}`,
-                    "PPN": -150000
-                });
-                djpList.push({
-                    "nomor faktur": `040.001.25.9999${i}`,
-                    "vat": -150000
-                });
-
-                // Keyword Return
-                erpList.push({
-                    "No Tax": `040.001.25.8888${i} (Return)`,
-                    "PPN": 200000
-                });
-                djpList.push({
-                    "nomor faktur": `040.001.25.8888${i} (Retur Faktur)`,
-                    "vat": 200000
-                });
+            // 5. MISSING ERP (50 items)
+            for (let i = 1; i <= 50; i++) {
+                const inv = `010.000.25.${(50000000 + i)}`;
+                djp.push({ "Tanggal": "2026-05-13", "Nomor Faktur": inv, "Nominal VAT": 800000, "Lawan Transaksi": "PT Unknown" });
             }
 
-            // 6. DUPLICATE ERP: 50 data ganda
-            for (let i = 101001; i <= 101025; i++) {
-                erpList.push({
-                    "No Tax": `040.001.25.${i}`,
-                    "PPN": Math.round(500000 + (i % 1000) * 1250)
-                });
-            }
+            rawErpData = erp; erpColumns = Object.keys(erp[0]);
+            rawDjpData = djp; djpColumns = Object.keys(djp[0]);
 
-            rawErpData = erpList;
-            erpColumns = Object.keys(erpList[0]);
-            
-            rawDjpData = djpList;
-            djpColumns = Object.keys(djpList[0]);
-
-            document.getElementById('nameERP').textContent = "Laporan Pencarian No Pajak & DPP Berdasarkan SI.xlsx";
-            document.getElementById('rowsERP').textContent = `${erpList.length.toLocaleString('id-ID')} Baris`;
+            document.getElementById('nameERP').textContent = "ERP_Dummy_5000.xlsx";
+            document.getElementById('rowsERP').textContent = "5.000 Baris";
             document.getElementById('statusERP').classList.remove('hidden');
 
-            document.getElementById('nameDJP').textContent = "REKAP_A2.xlsx";
-            document.getElementById('rowsDJP').textContent = `${djpList.length.toLocaleString('id-ID')} Baris`;
+            document.getElementById('nameDJP').textContent = "DJP_A2_Dummy_5000.xlsx";
+            document.getElementById('rowsDJP').textContent = "5.000 Baris";
             document.getElementById('statusDJP').classList.remove('hidden');
 
-            writeLog("Data Simulasi 5.000+ Baris Sukses Dimuat!", "success");
-            showNotification("Data Demo terunggah! Silakan jalankan pencocokan.", "info");
-
-            checkAndInitializeMapping();
-        }
+            initMapping();
+            showNotif("5.050 Baris Data Simulasi berhasil dimuat!", "info");
+        });
     </script>
 </body>
 </html>
