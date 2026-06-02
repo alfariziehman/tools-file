@@ -74,14 +74,14 @@
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-brand-500/10">
-                    <i class="fa-solid fa-bolt text-white text-lg"></i>
+                    <i class="fa-solid fa-chart-line text-white text-lg"></i>
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
                         <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">Enterprise Tax Audit Engine</h1>
-                        <span class="px-2 py-0.5 text-[10px] font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20 rounded-full uppercase tracking-wider">Indexed HashMatch V3</span>
+                        <span class="px-2 py-0.5 text-[10px] font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20 rounded-full uppercase tracking-wider">V4 Auto-Balance</span>
                     </div>
-                    <p class="text-xs text-slate-400">Ultra-Fast O(1) Indexing, Tolerance Engine, & Smart Duplicate Detection.</p>
+                    <p class="text-xs text-slate-400">Ultra-Fast Engine, Full Frequency Duplicate Check & Precision Float Fix.</p>
                 </div>
             </div>
             
@@ -89,13 +89,6 @@
                 <button id="btnLoadDummy" class="px-4 py-2 text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all rounded-lg flex items-center gap-2">
                     <i class="fa-solid fa-flask-vial animate-pulse"></i> Muat Data Uji (100k+ Rows)
                 </button>
-                <div class="flex items-center gap-2 bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-lg">
-                    <span class="flex h-2 w-2 relative">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                    </span>
-                    <span class="text-[11px] text-slate-400 font-medium">100% Client-Side Sandbox</span>
-                </div>
             </div>
         </div>
     </header>
@@ -133,7 +126,7 @@
                         <i class="fa-solid fa-building-columns text-xl"></i>
                     </div>
                     <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">UNGGAH BERKAS DJP A2</h3>
-                    <p class="text-[11px] text-slate-400 mt-1 max-w-xs">Drop berkas "REKAP_A2" dari sistem Coretax di sini</p>
+                    <p class="text-[11px] text-slate-400 mt-1 max-w-xs">Drop berkas "REKAP_A2" dari Coretax di sini</p>
                 </div>
                 <div id="statusDJP" class="hidden mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between">
                     <div class="flex items-center gap-2 overflow-hidden">
@@ -155,13 +148,13 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-3 bg-slate-900/40 p-4 rounded-xl border border-slate-800/60">
                         <h4 class="text-[11px] font-bold text-brand-400 tracking-wider uppercase"><i class="fa-solid fa-database mr-1"></i> File ERP</h4>
-                        <select id="mapErpInvoice" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-brand-500" title="Nomor Faktur ERP"></select>
-                        <select id="mapErpPpn" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-brand-500" title="Nominal PPN ERP"></select>
+                        <select id="mapErpInvoice" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-brand-500"></select>
+                        <select id="mapErpPpn" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-brand-500"></select>
                     </div>
                     <div class="space-y-3 bg-slate-900/40 p-4 rounded-xl border border-slate-800/60">
                         <h4 class="text-[11px] font-bold text-emerald-400 tracking-wider uppercase"><i class="fa-solid fa-landmark mr-1"></i> File DJP A2</h4>
-                        <select id="mapDjpInvoice" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-emerald-500" title="Nomor Faktur A2"></select>
-                        <select id="mapDjpPpn" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-emerald-500" title="Nominal VAT A2"></select>
+                        <select id="mapDjpInvoice" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-emerald-500"></select>
+                        <select id="mapDjpPpn" class="w-full bg-slate-950 border border-slate-800 rounded-lg text-xs p-2 text-slate-200 focus:outline-none focus:border-emerald-500"></select>
                     </div>
                 </div>
                 <div class="pt-2 flex justify-end">
@@ -186,7 +179,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
-                        <i class="fa-solid fa-cogs animate-spin text-brand-500"></i> <span id="progressTitle">Memproses Ultra-Fast Matching...</span>
+                        <i class="fa-solid fa-cogs animate-spin text-brand-500"></i> <span id="progressTitle">Memproses Ultra-Fast Matching & Balancing...</span>
                     </h3>
                     <p class="text-xs text-slate-400 mt-1" id="progressStatus">Menginisialisasi normalisasi data...</p>
                 </div>
@@ -201,87 +194,109 @@
         <section id="sectionDashboard" class="hidden space-y-6 transition-all duration-300">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-900/40 p-5 rounded-2xl border border-slate-800">
                 <div>
-                    <h2 class="text-lg font-bold text-slate-200"><i class="fa-solid fa-shield-check text-emerald-400 mr-2"></i>Audit Terselesaikan</h2>
-                    <p class="text-xs text-slate-400 mt-1">Hierarchical Indexed Engine berhasil memetakan data dengan kecepatan O(1) Lookup.</p>
+                    <h2 class="text-lg font-bold text-slate-200"><i class="fa-solid fa-shield-check text-emerald-400 mr-2"></i>Audit Selesai & Balanced</h2>
+                    <p class="text-xs text-slate-400 mt-1">Hierarchical Indexed Engine berhasil memetakan & mengagregasi ratusan ribu data secara akurat.</p>
                 </div>
                 <button id="btnExport" class="px-6 py-3 text-xs font-bold text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 rounded-xl active:scale-95 transition-all shadow-md shadow-emerald-500/10 flex items-center gap-2">
-                    <i class="fa-solid fa-file-excel text-base"></i> UNDUH LAPORAN AUDIT ENTERPRISE (XLSX)
+                    <i class="fa-solid fa-file-excel text-base"></i> UNDUH LAPORAN AUDIT LENGKAP (XLSX)
                 </button>
             </div>
 
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <!-- New KPI Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="glass-card p-4 rounded-xl flex flex-col justify-between border-b-2 border-brand-500">
+                    <span class="text-[10px] font-bold text-brand-400 uppercase tracking-wider">Total PPN ERP Asli</span>
+                    <span class="text-lg font-bold mt-1 text-white mono truncate" id="kpiTotalErp">Rp 0</span>
+                </div>
                 <div class="glass-card p-4 rounded-xl flex flex-col justify-between border-b-2 border-emerald-500">
-                    <span class="text-[9px] font-bold text-emerald-400 uppercase tracking-wider">Total Match (Semua Level)</span>
-                    <span class="text-xl font-bold mt-1 text-white mono" id="statMatched">0</span>
+                    <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Total VAT A2 Asli</span>
+                    <span class="text-lg font-bold mt-1 text-white mono truncate" id="kpiTotalA2">Rp 0</span>
                 </div>
-                <div class="glass-card p-4 rounded-xl flex flex-col justify-between border-b-2 border-sky-500">
-                    <span class="text-[9px] font-bold text-sky-400 uppercase tracking-wider">Fuzzy / Tolerance Match</span>
-                    <span class="text-xl font-bold mt-1 text-white mono" id="statFuzzy">0</span>
+                <div class="glass-card p-4 rounded-xl flex flex-col justify-between border-b-2 border-slate-400">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Selisih Global (Total PPN - VAT)</span>
+                    <span class="text-lg font-bold mt-1 text-white mono truncate" id="kpiSelisihGlobal">Rp 0</span>
                 </div>
-                <div class="glass-card p-4 rounded-xl flex flex-col justify-between border-b-2 border-rose-500">
-                    <span class="text-[9px] font-bold text-rose-400 uppercase tracking-wider">Amount Mismatch (Selisih)</span>
-                    <span class="text-xl font-bold mt-1 text-white mono" id="statSelisih">0</span>
-                </div>
-                <div class="glass-card p-4 rounded-xl flex flex-col justify-between border-b-2 border-slate-500">
-                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Missing (A2 / ERP)</span>
-                    <span class="text-xl font-bold mt-1 text-white mono" id="statMissing">0</span>
-                </div>
-                <div class="glass-card p-4 rounded-xl flex flex-col justify-between border-b-2 border-amber-500">
-                    <span class="text-[9px] font-bold text-amber-400 uppercase tracking-wider">Duplicate Confirmed</span>
-                    <span class="text-xl font-bold mt-1 text-white mono" id="statDuplicate">0</span>
+                <div class="glass-card p-4 rounded-xl flex flex-col justify-between border-b-2 border-indigo-500">
+                    <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Status Balancing File</span>
+                    <div class="flex items-center gap-2 mt-1" id="kpiBalanceStatus">
+                        <!-- Disuntik JS -->
+                    </div>
                 </div>
             </div>
 
-            <!-- Data Preview ERP -->
+            <!-- Detail Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div class="glass-card p-3 rounded-xl flex flex-col justify-between border-l-2 border-emerald-500">
+                    <span class="text-[9px] font-bold text-emerald-400 uppercase tracking-wider">Total Match & %</span>
+                    <span class="text-sm font-bold mt-1 text-white mono" id="statMatched">0 <span class="text-[10px] text-slate-400 ml-1" id="statMatchPct">(0%)</span></span>
+                </div>
+                <div class="glass-card p-3 rounded-xl flex flex-col justify-between border-l-2 border-sky-500">
+                    <span class="text-[9px] font-bold text-sky-400 uppercase tracking-wider">Fuzzy / Typo Match</span>
+                    <span class="text-sm font-bold mt-1 text-white mono" id="statFuzzy">0</span>
+                </div>
+                <div class="glass-card p-3 rounded-xl flex flex-col justify-between border-l-2 border-rose-500">
+                    <span class="text-[9px] font-bold text-rose-400 uppercase tracking-wider">Nominal Amount Mismatch</span>
+                    <span class="text-sm font-bold mt-1 text-white mono truncate" id="statSelisih">Rp 0</span>
+                </div>
+                <div class="glass-card p-3 rounded-xl flex flex-col justify-between border-l-2 border-amber-500">
+                    <span class="text-[9px] font-bold text-amber-400 uppercase tracking-wider">Duplicate Nominal (Total)</span>
+                    <span class="text-sm font-bold mt-1 text-white mono truncate" id="statDuplicate">Rp 0</span>
+                </div>
+                <div class="glass-card p-3 rounded-xl flex flex-col justify-between border-l-2 border-purple-500">
+                    <span class="text-[9px] font-bold text-purple-400 uppercase tracking-wider">Total Nominal Retur</span>
+                    <span class="text-sm font-bold mt-1 text-white mono truncate" id="statRetur">Rp 0</span>
+                </div>
+            </div>
+
+            <!-- Data Preview ERP (Optimized) -->
             <div class="glass-panel p-6 rounded-2xl space-y-4">
-                <h3 class="text-sm font-semibold text-slate-200">Pratinjau Hasil (Sheet ERP - 50 Baris Pertama)</h3>
+                <h3 class="text-sm font-semibold text-slate-200">Pratinjau Hasil (Sheet ERP - 100 Baris Pertama Tercepat)</h3>
                 <div class="overflow-x-auto rounded-xl border border-slate-850 max-h-[400px]">
-                    <table class="w-full text-left text-xs text-slate-300 whitespace-nowrap">
+                    <table class="w-full text-left text-[11px] text-slate-300 whitespace-nowrap">
                         <thead class="sticky top-0 bg-slate-900 font-semibold text-slate-200 border-b border-slate-850 z-10">
                             <tr>
                                 <th class="p-3">#</th>
                                 <th class="p-3">No Faktur Asli</th>
                                 <th class="p-3 text-right">PPN Asli</th>
-                                <!-- Kolom Tambahan (Audit) -->
                                 <th class="p-3 bg-brand-500/10 text-brand-300">CLEAN_INVOICE</th>
+                                <th class="p-3 bg-brand-500/10 text-brand-300 text-center">MATCH_FLAG</th>
+                                <th class="p-3 bg-brand-500/10 text-brand-300 text-center">MATCH_SOURCE</th>
                                 <th class="p-3 bg-brand-500/10 text-brand-300 text-right">VAT_A2 (Match)</th>
-                                <th class="p-3 bg-brand-500/10 text-brand-300">STATUS_AUDIT</th>
                                 <th class="p-3 bg-brand-500/10 text-brand-300 text-right">SELISIH_PPN</th>
-                                <th class="p-3 bg-brand-500/10 text-brand-300">CONFIDENCE</th>
-                                <th class="p-3 bg-brand-500/10 text-brand-300">AUDIT_REASON</th>
+                                <th class="p-3 bg-brand-500/10 text-brand-300">STATUS_AUDIT & REASON</th>
                             </tr>
                         </thead>
                         <tbody id="tableBodyPreview" class="divide-y divide-slate-850 font-mono">
-                            <!-- Injected by JS -->
+                            <!-- Injected via DocumentFragment JS -->
                         </tbody>
                     </table>
                 </div>
-                <p class="text-[10px] text-slate-500 italic">* Unduh file Excel untuk melihat dataset lengkap dan Sheet rekonsiliasi DJP A2.</p>
             </div>
         </section>
 
     </main>
 
-    <!-- INLINE WEB WORKER (OPTIMIZED WITH HASH MAPS & INDEXING O(1)) -->
+    <!-- INLINE WEB WORKER -->
     <script id="recon-worker" type="javascript/worker">
         self.onmessage = function(e) {
             const { erpRaw, djpRaw, erpMap, djpMap, tolerance = 10 } = e.data;
             
-            // ==========================================
-            // MODULE 1: SMART NORMALIZATION ENGINE
-            // ==========================================
             function cleanNum(val) {
-                if (!val) return 0;
-                if (typeof val === 'number') return val;
-                let clean = String(val).replace(/Rp/gi, "").replace(/\s/g, "");
-                const dotIdx = clean.lastIndexOf('.');
-                const commaIdx = clean.lastIndexOf(',');
-                if (commaIdx > dotIdx) clean = clean.replace(/\./g, "").replace(/,/g, ".");
-                else if (dotIdx > commaIdx) clean = clean.replace(/,/g, "");
-                else clean = clean.replace(/,/g, "");
-                const num = parseFloat(clean);
-                return isNaN(num) ? 0 : num;
+                if (val === null || val === undefined || val === '') return 0;
+                let num = 0;
+                if (typeof val === 'number') {
+                    num = val;
+                } else {
+                    let clean = String(val).replace(/Rp/gi, "").replace(/\s/g, "");
+                    const dotIdx = clean.lastIndexOf('.');
+                    const commaIdx = clean.lastIndexOf(',');
+                    if (commaIdx > dotIdx) clean = clean.replace(/\./g, "").replace(/,/g, ".");
+                    else if (dotIdx > commaIdx) clean = clean.replace(/,/g, "");
+                    else clean = clean.replace(/,/g, "");
+                    num = parseFloat(clean);
+                    if (isNaN(num)) return 0;
+                }
+                return Number(num.toFixed(2));
             }
 
             function normalizeInvoice(inv) {
@@ -293,9 +308,6 @@
                 return cleanInv.length >= 8 ? cleanInv.slice(-8) : cleanInv;
             }
 
-            // ==========================================
-            // MODULE 2: RETURN & VALIDATION ENGINE
-            // ==========================================
             function isReturn(row, invStr, nominalVal) {
                 if (nominalVal < 0) return true;
                 const str = String(invStr || '').toLowerCase();
@@ -303,9 +315,6 @@
                 return false;
             }
 
-            // ==========================================
-            // MODULE 3: FUZZY MATCHING (Levenshtein)
-            // ==========================================
             function levenshtein(s, t) {
                 if (!s.length) return t.length;
                 if (!t.length) return s.length;
@@ -314,9 +323,7 @@
                     arr[i] = [i];
                     for (let j = 1; j <= s.length; j++) {
                         arr[i][j] = i === 0 ? j : Math.min(
-                            arr[i - 1][j] + 1,
-                            arr[i][j - 1] + 1,
-                            arr[i - 1][j - 1] + (s[j - 1] === t[i - 1] ? 0 : 1)
+                            arr[i - 1][j] + 1, arr[i][j - 1] + 1, arr[i - 1][j - 1] + (s[j - 1] === t[i - 1] ? 0 : 1)
                         );
                     }
                 }
@@ -332,13 +339,17 @@
             }
 
             // ==========================================
-            // DATA PREPARATION
+            // PREP DATA
             // ==========================================
-            self.postMessage({ type: 'status', msg: 'Engine Normalisasi: Membersihkan format data...', pct: 5 });
+            self.postMessage({ type: 'status', msg: 'Normalisasi Data & Perhitungan Agregat...', pct: 5 });
+
+            let totalPpnErp = 0;
+            let totalVatA2 = 0;
 
             let erpData = erpRaw.map(row => {
                 const invRaw = row[erpMap.invoice] || "";
                 const ppnRaw = cleanNum(row[erpMap.ppn]);
+                totalPpnErp += ppnRaw;
                 const cleanInv = normalizeInvoice(invRaw);
                 return {
                     original: row, invRaw, cleanInv, key8: get8Digits(cleanInv), ppn: ppnRaw,
@@ -350,6 +361,7 @@
             let djpData = djpRaw.map(row => {
                 const invRaw = row[djpMap.invoice] || "";
                 const ppnRaw = cleanNum(row[djpMap.ppn]);
+                totalVatA2 += ppnRaw;
                 const cleanInv = normalizeInvoice(invRaw);
                 return {
                     original: row, invRaw, cleanInv, key8: get8Digits(cleanInv), ppn: ppnRaw,
@@ -358,67 +370,58 @@
                 };
             });
 
-            self.postMessage({ type: 'status', msg: 'Membangun Hash Map Index untuk Lookup O(1)...', pct: 15 });
+            self.postMessage({ type: 'status', msg: 'Membangun Hash Map & Deteksi Semua Duplikasi...', pct: 15 });
 
-            // ==========================================
-            // MODULE 4: HASH MAPPING & INDEXING (THE SECRET TO SPEED)
-            // ==========================================
-            function flagDuplicates(dataset, side) {
-                const seen = new Set();
+            function flagAllDuplicates(dataset, side) {
+                const freq = new Map();
                 dataset.forEach(item => {
                     if(item.isRetur) return;
-                    const composite = `${item.cleanInv}_${item.ppn}`;
-                    if (seen.has(composite)) {
+                    const key = `${item.cleanInv}_${item.ppn}`;
+                    freq.set(key, (freq.get(key) || 0) + 1);
+                });
+                dataset.forEach(item => {
+                    if(item.isRetur) return;
+                    const key = `${item.cleanInv}_${item.ppn}`;
+                    if(freq.get(key) > 1) {
                         item.status = 'DUPLICATE_CONFIRMED';
-                        item.reason = `Faktur dan nominal identik terdeteksi ganda di dalam file ${side}`;
+                        item.reason = `Terdeteksi ${freq.get(key)} faktur identik (Nomor & Nominal) di ${side}`;
                         item.confidence = 100;
-                    } else { seen.add(composite); }
+                    }
                 });
             }
             
-            flagDuplicates(erpData, 'ERP');
-            flagDuplicates(djpData, 'DJP');
+            flagAllDuplicates(erpData, 'ERP');
+            flagAllDuplicates(djpData, 'DJP');
 
-            // --- BUILD DJP INDEXES ---
-            const djpExactMap = new Map(); // For O(1) Exact Matches
-            const djpKey8Map = new Map();  // For O(1) Partial Key Matches
-            const djpAmountMap = new Map(); // For Range Queries (Tolerance/Fuzzy)
-            const djpCleanInvMap = new Map(); // For Mismatch catching
+            const djpExactMap = new Map(); 
+            const djpKey8Map = new Map();  
+            const djpAmountMap = new Map(); 
+            const djpCleanInvMap = new Map(); 
 
             djpData.forEach(djp => {
                 if (djp.isRetur || djp.status === 'DUPLICATE_CONFIRMED') return;
                 
-                // 1. Exact Index (Invoice_Amount)
                 const exactKey = `${djp.cleanInv}_${djp.ppn}`;
                 if (!djpExactMap.has(exactKey)) djpExactMap.set(exactKey, []);
                 djpExactMap.get(exactKey).push(djp);
 
-                // 2. 8-Digit Index
                 if (djp.key8.length >= 8) {
                     if (!djpKey8Map.has(djp.key8)) djpKey8Map.set(djp.key8, []);
                     djpKey8Map.get(djp.key8).push(djp);
                 }
 
-                // 3. Amount Index (Crucial for fast Fuzzy/Tolerance)
-                const ppnInt = Math.round(djp.ppn); // Group by integer to avoid float issues
+                const ppnInt = Math.round(djp.ppn); 
                 if (!djpAmountMap.has(ppnInt)) djpAmountMap.set(ppnInt, []);
                 djpAmountMap.get(ppnInt).push(djp);
 
-                // 4. Clean Invoice Index
                 if (!djpCleanInvMap.has(djp.cleanInv)) djpCleanInvMap.set(djp.cleanInv, []);
                 djpCleanInvMap.get(djp.cleanInv).push(djp);
             });
 
-            self.postMessage({ type: 'status', msg: 'Melakukan Indexed Matching...', pct: 30 });
-
-            // ==========================================
-            // MODULE 5: ULTRA-FAST MATCHING ENGINE
-            // ==========================================
-            let cExact=0, cTol=0, cKey=0, cFuzzy=0, cMismatch=0, cDup=0, cRet=0, cMissErp=0, cMissA2=0;
+            self.postMessage({ type: 'status', msg: 'Melakukan Indexed Matching O(1)...', pct: 30 });
 
             const totalErp = erpData.length;
 
-            // Helper to pull the first unmatched item from an array in a Map
             function getFirstUnmatched(map, key) {
                 if (!map.has(key)) return null;
                 const arr = map.get(key);
@@ -429,44 +432,39 @@
             }
 
             erpData.forEach((erp, index) => {
-                if (index % 5000 === 0) { // Update progress less frequently to save UI render time
+                if (index % 10000 === 0) { 
                     self.postMessage({ type: 'status', msg: `Matching baris ${index} dari ${totalErp}...`, pct: 30 + Math.floor((index/totalErp)*60) });
                 }
 
                 if (erp.isRetur) {
                     erp.status = 'EXCLUDED_RETUR'; erp.reason = 'Transaksi diidentifikasi sebagai retur.';
-                    cRet++; return;
+                    return;
                 }
-                if (erp.status === 'DUPLICATE_CONFIRMED') { cDup++; return; }
+                if (erp.status === 'DUPLICATE_CONFIRMED') return;
 
                 let match = null;
                 const erpPpnInt = Math.round(erp.ppn);
 
-                // LAYER 1: O(1) EXACT MATCH
                 match = getFirstUnmatched(djpExactMap, `${erp.cleanInv}_${erp.ppn}`);
                 if (match) {
                     erp.status = 'EXACT_MATCH'; erp.reason = 'Nomor faktur dan nominal PPN identik (100%)';
-                    erp.confidence = 100; cExact++;
+                    erp.confidence = 100;
                 }
 
-                // LAYER 2: TOLERANCE AMOUNT (Check only DJP items with same Invoice)
                 if (!match) {
                     const candidates = djpCleanInvMap.get(erp.cleanInv);
                     if (candidates) {
                         for(let i=0; i<candidates.length; i++) {
                             const d = candidates[i];
                             if (!d.isMatched && Math.abs(d.ppn - erp.ppn) <= tolerance) {
-                                match = d;
-                                erp.status = 'MATCH_WITH_TOLERANCE';
-                                erp.reason = `Nomor faktur identik. Selisih nominal (Rp ${Math.abs(erp.ppn - d.ppn)}) dalam batas toleransi.`;
-                                erp.confidence = 98; cTol++;
-                                break;
+                                match = d; erp.status = 'MATCH_WITH_TOLERANCE';
+                                erp.reason = `Faktur identik. Selisih (Rp ${Math.abs(erp.ppn - d.ppn)}) dalam toleransi.`;
+                                erp.confidence = 98; break;
                             }
                         }
                     }
                 }
 
-                // LAYER 3 & 4: 8-DIGIT KEY (Exact & Tolerance)
                 if (!match && erp.key8.length >= 8) {
                     const candidates = djpKey8Map.get(erp.key8);
                     if (candidates) {
@@ -475,22 +473,18 @@
                             if (!d.isMatched) {
                                 if (d.ppn === erp.ppn) {
                                     match = d; erp.status = 'PARTIAL_KEY_MATCH'; erp.reason = '8-digit terakhir dan nominal identik.';
-                                    erp.confidence = 95; cKey++; break;
+                                    erp.confidence = 95; break;
                                 } else if (Math.abs(d.ppn - erp.ppn) <= tolerance) {
                                     match = d; erp.status = 'PARTIAL_TOLERANCE_MATCH'; erp.reason = `Match 8-digit. Selisih nominal dalam toleransi.`;
-                                    erp.confidence = 90; cTol++; break;
+                                    erp.confidence = 90; break;
                                 }
                             }
                         }
                     }
                 }
 
-                // LAYER 5: O(k) FUZZY MATCHING (Only check DJP items with similar Amount!)
                 if (!match) {
-                    let bestFuzzyMatch = null;
-                    let bestScore = 0;
-                    
-                    // Fetch ONLY candidates within tolerance amount
+                    let bestFuzzyMatch = null, bestScore = 0;
                     for(let t = -tolerance; t <= tolerance; t++) {
                         const checkPpn = erpPpnInt + t;
                         const candidates = djpAmountMap.get(checkPpn);
@@ -500,83 +494,151 @@
                                 if (!d.isMatched) {
                                     const score = getSimilarityScore(erp.cleanInv, d.cleanInv);
                                     if (score > 85 && score > bestScore) {
-                                        bestScore = score;
-                                        bestFuzzyMatch = d;
+                                        bestScore = score; bestFuzzyMatch = d;
                                     }
                                 }
                             }
                         }
                     }
-
                     if (bestFuzzyMatch) {
-                        match = bestFuzzyMatch;
-                        erp.status = 'FUZZY_MATCH';
+                        match = bestFuzzyMatch; erp.status = 'FUZZY_MATCH';
                         erp.reason = `Deteksi typo faktur (Kemiripan ${bestScore.toFixed(1)}%). Nominal sesuai.`;
                         erp.confidence = Math.round(bestScore);
-                        cFuzzy++;
                     }
                 }
 
-                // LAYER 6: AMOUNT MISMATCH
                 if (!match) {
                     let mismatchCand = getFirstUnmatched(djpCleanInvMap, erp.cleanInv);
                     if (!mismatchCand && erp.key8.length >= 8) mismatchCand = getFirstUnmatched(djpKey8Map, erp.key8);
                     
                     if (mismatchCand) {
-                        match = mismatchCand;
-                        erp.status = 'AMOUNT_MISMATCH';
-                        erp.reason = `Faktur ditemukan, namun selisih PPN (Rp ${Math.abs(erp.ppn - match.ppn)}) di luar batas toleransi.`;
-                        erp.confidence = 50; cMismatch++;
+                        match = mismatchCand; erp.status = 'AMOUNT_MISMATCH';
+                        erp.reason = `Faktur ditemukan, selisih PPN (Rp ${Math.abs(erp.ppn - match.ppn)}) di luar batas toleransi.`;
+                        erp.confidence = 50; 
                     }
                 }
 
-                // LAYER 7: MISSING A2
                 if (!match) {
                     erp.status = 'MISSING_A2';
                     erp.reason = 'Tidak ditemukan kecocokan faktur maupun nominal di data A2.';
-                    erp.confidence = 0; cMissA2++;
+                    erp.confidence = 0;
                 }
 
-                // Link Match Results
                 if (match) {
-                    match.isMatched = true; // Mark to prevent double match
-                    erp.matchedWith = match; erp.selisih = erp.ppn - match.ppn;
+                    match.isMatched = true; erp.matchedWith = match; erp.selisih = erp.ppn - match.ppn;
                     match.matchedWith = erp; match.status = erp.status;
-                    match.reason = erp.reason; match.confidence = erp.confidence;
-                    match.selisih = -(erp.selisih);
+                    match.reason = erp.reason; match.confidence = erp.confidence; match.selisih = -(erp.selisih);
                 }
             });
 
-            self.postMessage({ type: 'status', msg: 'Menyusun Laporan Akhir...', pct: 95 });
+            self.postMessage({ type: 'status', msg: 'Single-Pass Aggregation & Formatting Output...', pct: 95 });
 
-            // Process remaining DJP
             djpData.forEach(djp => {
                 if (djp.isRetur) { djp.status = 'EXCLUDED_RETUR'; djp.reason = 'Transaksi diidentifikasi sebagai retur.'; }
-                else if (djp.status === 'DUPLICATE_CONFIRMED') { cDup++; } 
-                else if (!djp.isMatched && !djp.matchedWith) {
+                else if (!djp.isMatched && djp.status !== 'DUPLICATE_CONFIRMED' && !djp.matchedWith) {
                     djp.status = 'MISSING_ERP'; djp.reason = 'Faktur terdaftar di DJP namun tidak ditemukan di pembukuan ERP.';
-                    djp.confidence = 0; cMissErp++;
+                    djp.confidence = 0;
                 }
             });
 
-            // Format Output
-            const mapOutput = (data, isErp) => data.map(i => {
+            // --- SMART SANITIZER UNTUK OUTPUT (Pembersih Desimal Aman) ---
+            const sanitizeOriginalData = (orig) => {
+                const sanitized = {};
+                for (let key in orig) {
+                    let v = orig[key];
+                    if (typeof v === 'number') {
+                        sanitized[key] = Number(v.toFixed(2));
+                    } else if (typeof v === 'string') {
+                        let trimmed = String(v).trim();
+                        if (!trimmed) {
+                            sanitized[key] = v;
+                            continue;
+                        }
+                        
+                        // Deteksi murni format float "123.45" atau "123,45"
+                        let isStrictFloat = /^-?\d+[\.,]\d+$/.test(trimmed);
+                        // Deteksi murni format int "123"
+                        let isStrictInt = /^-?\d+$/.test(trimmed);
+                        
+                        let intPart = trimmed.split(/[\.,]/)[0].replace('-', '');
+                        // Jangan konversi jika diawali angka 0 (melindungi faktur/telepon)
+                        let isLeadingZero = intPart.length > 1 && intPart.startsWith('0');
+                        // Jangan konversi jika terlalu panjang (melindungi NIK/NPWP/ID >= 15 digit)
+                        let isTooLong = intPart.length > 14; 
+                        // Jangan konversi jika formatnya identik dengan YYYYMMDD (tanggal eksport)
+                        let isPossibleDate = trimmed.length === 8 && (trimmed.startsWith('20') || trimmed.startsWith('19'));
+
+                        if ((isStrictFloat || isStrictInt) && !isLeadingZero && !isTooLong && !isPossibleDate) {
+                            let normalized = trimmed.replace(',', '.');
+                            sanitized[key] = Number(parseFloat(normalized).toFixed(2));
+                        } else {
+                            sanitized[key] = v; // Biarkan sebagai String aslinya
+                        }
+                    } else {
+                        sanitized[key] = v;
+                    }
+                }
+                return sanitized;
+            };
+
+            const summaryERP = {};
+            const summaryA2 = {};
+            let cMatch=0, cFuzzy=0, cSelisihMismatch=0, cDupPpn=0, cReturPpn=0;
+
+            const finalSheet1 = erpData.map(i => {
+                const st = i.status || 'UNMAPPED';
+                if(!summaryERP[st]) summaryERP[st] = { count: 0, total: 0 };
+                summaryERP[st].count += 1;
+                summaryERP[st].total += i.ppn;
+
+                if(st.includes('MATCH') && !st.includes('MISMATCH')) cMatch++;
+                if(st === 'FUZZY_MATCH') cFuzzy++;
+                if(st === 'AMOUNT_MISMATCH') cSelisihMismatch += Math.abs(i.selisih);
+                if(st === 'DUPLICATE_CONFIRMED') cDupPpn += i.ppn;
+                if(st === 'EXCLUDED_RETUR') cReturPpn += i.ppn;
+
+                // Terapkan fungsi sanitize yang AMAN
+                const sanitizedOriginal = sanitizeOriginalData(i.original);
+
                 const append = {
                     CLEAN_INVOICE: i.cleanInv, KEY_8_DIGIT: i.key8,
-                    [isErp ? 'VAT_A2' : 'PPN_ERP']: i.matchedWith ? i.matchedWith.ppn : 0,
-                    STATUS_AUDIT: i.status, SELISIH_PPN: i.selisih,
+                    VAT_A2: i.matchedWith ? Number(i.matchedWith.ppn.toFixed(2)) : 0,
+                    STATUS_AUDIT: st, SELISIH_PPN: Number(i.selisih.toFixed(2)),
                     CONFIDENCE: i.confidence + '%', AUDIT_REASON: i.reason
                 };
-                return Object.assign({}, i.original, append);
+                return Object.assign({}, sanitizedOriginal, append);
+            });
+
+            const finalSheet2 = djpData.map(i => {
+                const st = i.status || 'UNMAPPED';
+                if(!summaryA2[st]) summaryA2[st] = { count: 0, total: 0 };
+                summaryA2[st].count += 1;
+                summaryA2[st].total += i.ppn;
+
+                const sanitizedOriginal = sanitizeOriginalData(i.original);
+
+                const append = {
+                    CLEAN_INVOICE: i.cleanInv, KEY_8_DIGIT: i.key8,
+                    PPN_ERP: i.matchedWith ? Number(i.matchedWith.ppn.toFixed(2)) : 0,
+                    STATUS_AUDIT: st, SELISIH_PPN: Number(i.selisih.toFixed(2)),
+                    CONFIDENCE: i.confidence + '%', AUDIT_REASON: i.reason
+                };
+                return Object.assign({}, sanitizedOriginal, append);
             });
 
             self.postMessage({
                 type: 'done',
-                sheet1Rows: mapOutput(erpData, true),
-                sheet2Rows: mapOutput(djpData, false),
+                sheet1Rows: finalSheet1,
+                sheet2Rows: finalSheet2,
+                summaryERP, summaryA2,
                 metrics: { 
-                    cMatch: cExact + cTol + cKey, cFuzzy, cSelisih: cMismatch, 
-                    cMiss: cMissA2 + cMissErp, cDup, cRet
+                    totalPpnErp: Number(totalPpnErp.toFixed(2)), 
+                    totalVatA2: Number(totalVatA2.toFixed(2)), 
+                    totalErp,
+                    cMatch, cFuzzy, 
+                    cSelisihMismatch: Number(cSelisihMismatch.toFixed(2)), 
+                    cDupPpn: Number(cDupPpn.toFixed(2)), 
+                    cReturPpn: Number(cReturPpn.toFixed(2))
                 }
             });
         };
@@ -587,19 +649,21 @@
         let rawErpData = [], rawDjpData = [];
         let erpColumns = [], djpColumns = [];
         let finalReportDataERP = [], finalReportDataA2 = [];
-        let finalMetrics = {};
+        let finalMetrics = {}, finalSumERP = {}, finalSumA2 = {};
 
         const writeLog = (msg, type = 'info') => {
             const consoleEl = document.getElementById('logConsole');
             const color = type === 'success' ? 'text-emerald-400' : type === 'error' ? 'text-red-400' : 'text-slate-300';
-            consoleEl.innerHTML += `<div class="${color}">&gt; [${new Date().toLocaleTimeString('id-ID')}] ${msg}</div>`;
-            consoleEl.scrollTop = consoleEl.scrollHeight;
+            requestAnimationFrame(() => {
+                consoleEl.innerHTML += `<div class="${color}">&gt; [${new Date().toLocaleTimeString('id-ID')}] ${msg}</div>`;
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            });
         };
 
         const showNotif = (msg, type = 'success') => {
             const el = document.getElementById('notificationArea');
-            el.className = `mb-6 p-4 rounded-xl border flex items-center gap-3 animate-fade-in ${type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/20 text-red-400'}`;
-            el.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'} text-lg"></i> <span class="text-xs font-semibold">${msg}</span>`;
+            el.className = `mb-6 p-4 rounded-xl border flex items-center gap-3 animate-fade-in ${type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : type === 'warning' ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' : 'bg-red-500/10 border-red-500/20 text-red-400'}`;
+            el.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : type==='warning'? 'fa-triangle-exclamation' : 'fa-circle-xmark'} text-lg"></i> <span class="text-xs font-semibold">${msg}</span>`;
             el.classList.remove('hidden');
             setTimeout(() => el.classList.add('hidden'), 5000);
         };
@@ -693,9 +757,11 @@
 
             worker.onmessage = e => {
                 if (e.data.type === 'status') {
-                    document.getElementById('progressStatus').textContent = e.data.msg;
-                    document.getElementById('progressBar').style.width = e.data.pct + "%";
-                    document.getElementById('progressPercent').textContent = e.data.pct + "%";
+                    requestAnimationFrame(() => {
+                        document.getElementById('progressStatus').textContent = e.data.msg;
+                        document.getElementById('progressBar').style.width = e.data.pct + "%";
+                        document.getElementById('progressPercent').textContent = e.data.pct + "%";
+                    });
                 } else if (e.data.type === 'done') {
                     const timeTaken = ((performance.now() - startTime) / 1000).toFixed(2);
                     
@@ -705,91 +771,180 @@
                     finalReportDataERP = e.data.sheet1Rows;
                     finalReportDataA2 = e.data.sheet2Rows;
                     finalMetrics = e.data.metrics;
+                    finalSumERP = e.data.summaryERP;
+                    finalSumA2 = e.data.summaryA2;
 
                     renderDashboard();
                     setTimeout(() => {
                         document.getElementById('sectionProgress').classList.add('hidden');
                         document.getElementById('sectionDashboard').classList.remove('hidden');
                         document.getElementById('sectionDashboard').scrollIntoView({ behavior: 'smooth' });
-                        writeLog(`Reconciliation Engine selesai dalam ${timeTaken} detik. (Kecepatan Enterprise O(1) Indexing)`, "success");
+                        writeLog(`Recon & Agregasi Selesai dalam ${timeTaken} detik. Data Balanced!`, "success");
                     }, 500);
                 }
             };
         });
 
         const renderDashboard = () => {
-            document.getElementById('statMatched').textContent = finalMetrics.cMatch.toLocaleString('id-ID');
-            document.getElementById('statFuzzy').textContent = finalMetrics.cFuzzy.toLocaleString('id-ID');
-            document.getElementById('statSelisih').textContent = finalMetrics.cSelisih.toLocaleString('id-ID');
-            document.getElementById('statMissing').textContent = finalMetrics.cMiss.toLocaleString('id-ID');
-            document.getElementById('statDuplicate').textContent = finalMetrics.cDup.toLocaleString('id-ID');
+            const m = finalMetrics;
+            
+            document.getElementById('kpiTotalErp').textContent = `Rp ${m.totalPpnErp.toLocaleString('id-ID')}`;
+            document.getElementById('kpiTotalA2').textContent = `Rp ${m.totalVatA2.toLocaleString('id-ID')}`;
+            
+            const selisihGlobal = m.totalPpnErp - m.totalVatA2;
+            document.getElementById('kpiSelisihGlobal').textContent = `Rp ${Math.abs(selisihGlobal).toLocaleString('id-ID')}`;
+            
+            const balanceBadge = document.getElementById('kpiBalanceStatus');
+            let sumErpCount = 0; let sumErpTotal = 0;
+            Object.values(finalSumERP).forEach(s => { sumErpCount += s.count; sumErpTotal += s.total; });
+            
+            const diffCount = Math.abs(m.totalErp - sumErpCount);
+            const diffSum = Math.abs(m.totalPpnErp - sumErpTotal);
+            
+            if (diffCount === 0 && diffSum < 1) {
+                balanceBadge.innerHTML = `<i class="fa-solid fa-scale-balanced text-emerald-400"></i><span class="text-xs text-emerald-400 font-bold">BALANCED (SELISIH 0)</span>`;
+            } else {
+                balanceBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-400"></i><span class="text-xs text-rose-400 font-bold">TIDAK BALANCE</span>`;
+                showNotif("Peringatan: Total Summary tidak balance dengan File Asli!", "warning");
+            }
+
+            document.getElementById('statMatched').innerHTML = `${m.cMatch.toLocaleString('id-ID')} <span class="text-[10px] text-slate-400 ml-1">(${((m.cMatch/m.totalErp)*100).toFixed(2)}%)</span>`;
+            document.getElementById('statFuzzy').textContent = m.cFuzzy.toLocaleString('id-ID');
+            document.getElementById('statSelisih').textContent = `Rp ${m.cSelisihMismatch.toLocaleString('id-ID')}`;
+            document.getElementById('statDuplicate').textContent = `Rp ${m.cDupPpn.toLocaleString('id-ID')}`;
+            document.getElementById('statRetur').textContent = `Rp ${m.cReturPpn.toLocaleString('id-ID')}`;
 
             const tbody = document.getElementById('tableBodyPreview');
             tbody.innerHTML = '';
+            const fragment = document.createDocumentFragment();
+            
             const erpInv = document.getElementById('mapErpInvoice').value;
             const erpPpn = document.getElementById('mapErpPpn').value;
 
-            finalReportDataERP.slice(0, 50).forEach((row, i) => {
-                let badge = 'status-missing';
+            finalReportDataERP.slice(0, 100).forEach((row, i) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/50";
+                
                 const st = row.STATUS_AUDIT;
-                if(st === 'EXACT_MATCH' || st === 'MATCH_WITH_TOLERANCE' || st === 'PARTIAL_KEY_MATCH' || st === 'PARTIAL_TOLERANCE_MATCH') badge = 'status-match';
+                let isMatch = st.includes('MATCH') && !st.includes('MISMATCH') ? 'YES' : 'NO';
+                let matchSrc = isMatch === 'YES' ? st.replace('_MATCH', '').replace('MATCH_WITH_', '').replace('PARTIAL_', '') : st;
+
+                let badge = 'status-missing';
+                if(isMatch==='YES') badge = 'status-match';
                 else if(st === 'FUZZY_MATCH') badge = 'status-fuzzy';
                 else if(st === 'AMOUNT_MISMATCH') badge = 'status-selisih';
                 else if(st === 'DUPLICATE_CONFIRMED') badge = 'status-duplicate';
                 else if(st === 'EXCLUDED_RETUR') badge = 'status-retur';
 
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-900/50">
-                        <td class="p-3 text-slate-500">${i+1}</td>
-                        <td class="p-3 truncate max-w-[150px]" title="${row[erpInv]}">${row[erpInv]}</td>
-                        <td class="p-3 text-right">Rp ${(row[erpPpn] || 0).toLocaleString('id-ID')}</td>
-                        <td class="p-3 font-bold text-brand-300 bg-brand-500/5">${row.CLEAN_INVOICE || '-'}</td>
-                        <td class="p-3 text-right font-semibold text-brand-300 bg-brand-500/5">Rp ${(row.VAT_A2 || 0).toLocaleString('id-ID')}</td>
-                        <td class="p-3 bg-brand-500/5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${badge}">${row.STATUS_AUDIT}</span></td>
-                        <td class="p-3 text-right font-bold bg-brand-500/5 ${Math.abs(row.SELISIH_PPN) > 10 ? 'text-rose-400' : 'text-slate-400'}">Rp ${(row.SELISIH_PPN || 0).toLocaleString('id-ID')}</td>
-                        <td class="p-3 text-[10px] font-bold text-center bg-brand-500/5 text-slate-400">${row.CONFIDENCE}</td>
-                        <td class="p-3 text-[10px] bg-brand-500/5 text-slate-300 truncate max-w-[250px]" title="${row.AUDIT_REASON}">${row.AUDIT_REASON}</td>
-                    </tr>`;
+                tr.innerHTML = `
+                    <td class="p-3 text-slate-500">${i+1}</td>
+                    <td class="p-3 truncate max-w-[150px]" title="${row[erpInv]}">${row[erpInv]}</td>
+                    <td class="p-3 text-right">Rp ${(row[erpPpn] || 0).toLocaleString('id-ID')}</td>
+                    <td class="p-3 font-bold text-brand-300 bg-brand-500/5">${row.CLEAN_INVOICE || '-'}</td>
+                    <td class="p-3 text-center bg-brand-500/5"><span class="px-2 rounded text-[9px] font-bold ${isMatch==='YES'?'bg-emerald-500/20 text-emerald-400':'bg-rose-500/20 text-rose-400'}">${isMatch}</span></td>
+                    <td class="p-3 text-center bg-brand-500/5 text-[9px] font-bold text-slate-400">${matchSrc}</td>
+                    <td class="p-3 text-right font-semibold text-brand-300 bg-brand-500/5">Rp ${(row.VAT_A2 || 0).toLocaleString('id-ID')}</td>
+                    <td class="p-3 text-right font-bold bg-brand-500/5 ${Math.abs(row.SELISIH_PPN) > 10 ? 'text-rose-400' : 'text-slate-400'}">Rp ${(row.SELISIH_PPN || 0).toLocaleString('id-ID')}</td>
+                    <td class="p-3 text-[10px] bg-brand-500/5 text-slate-300">
+                        <span class="px-2 py-0.5 rounded font-bold ${badge} mr-2">${st}</span>
+                        <span class="truncate max-w-[200px] inline-block align-bottom" title="${row.AUDIT_REASON}">${row.AUDIT_REASON}</span>
+                    </td>
+                `;
+                fragment.appendChild(tr);
+            });
+            
+            requestAnimationFrame(() => {
+                tbody.appendChild(fragment);
             });
         };
 
+        // ==============================================================================
+        // THE EXPORT LOGIC WITH AUTOMATIC BALANCING SUMMARY (AOA INJECTION)
+        // ==============================================================================
         document.getElementById('btnExport').addEventListener('click', () => {
             if (!finalReportDataERP.length) return;
-            writeLog("Membangun file Excel Enterprise Audit...");
+            writeLog("Membangun file Excel Enterprise dengan Auto-Summary...");
             try {
                 const wb = XLSX.utils.book_new();
+                
+                // MENGGUNAKAN DATA FINAL SECARA LANGSUNG (Karena sudah di-sanitize di dalam Worker)
                 const ws1 = XLSX.utils.json_to_sheet(finalReportDataERP);
                 const ws2 = XLSX.utils.json_to_sheet(finalReportDataA2);
 
+                const dataColsERP = Object.keys(finalReportDataERP[0]).length;
+                const dataColsA2 = Object.keys(finalReportDataA2[0]).length;
+
+                const aoaERP = generateSummaryAOA("SUMMARY ERP", finalSumERP, finalMetrics.totalPpnErp, finalMetrics.totalErp);
+                const aoaA2 = generateSummaryAOA("SUMMARY DJP A2", finalSumA2, finalMetrics.totalVatA2, finalReportDataA2.length);
+
+                XLSX.utils.sheet_add_aoa(ws1, aoaERP, { origin: { r: 0, c: dataColsERP + 1 } });
+                XLSX.utils.sheet_add_aoa(ws2, aoaA2, { origin: { r: 0, c: dataColsA2 + 1 } });
+
                 const appendCols = ['CLEAN_INVOICE', 'KEY_8_DIGIT', 'VAT_A2', 'PPN_ERP', 'STATUS_AUDIT', 'SELISIH_PPN', 'CONFIDENCE', 'AUDIT_REASON'];
-                applyAuditStyling(ws1, finalReportDataERP, appendCols);
-                applyAuditStyling(ws2, finalReportDataA2, appendCols);
+                applyMainStyling(ws1, finalReportDataERP, appendCols);
+                applyMainStyling(ws2, finalReportDataA2, appendCols);
+                
+                applySummaryStyling(ws1, dataColsERP + 1, aoaERP.length);
+                applySummaryStyling(ws2, dataColsA2 + 1, aoaA2.length);
 
                 XLSX.utils.book_append_sheet(wb, ws1, "ERP_RECON_RESULT");
                 XLSX.utils.book_append_sheet(wb, ws2, "DJP_A2_RECON_RESULT");
 
-                XLSX.writeFile(wb, `Enterprise_Tax_Recon_${new Date().toISOString().slice(0,10)}.xlsx`);
-                showNotif("Sukses Ekspor Laporan Excel!", "success");
+                XLSX.writeFile(wb, `Enterprise_Tax_Recon_V4_${new Date().toISOString().slice(0,10)}.xlsx`);
+                showNotif("Sukses Ekspor Laporan dengan Angka Bersih!", "success");
             } catch (err) { showNotif("Gagal mengekspor file.", "error"); writeLog(`Error export: ${err.message}`, "error"); }
         });
 
-        function applyAuditStyling(ws, data, appendedColNames) {
+        function generateSummaryAOA(title, sumObj, totalOrigPPN, totalOrigCount) {
+            const order = ['EXACT_MATCH', 'MATCH_WITH_TOLERANCE', 'PARTIAL_KEY_MATCH', 'PARTIAL_TOLERANCE_MATCH', 'FUZZY_MATCH', 'AMOUNT_MISMATCH', 'DUPLICATE_CONFIRMED', 'EXCLUDED_RETUR', 'MISSING_A2', 'MISSING_ERP'];
+            const aoa = [];
+            aoa.push([title, "", ""]);
+            aoa.push(["STATUS_AUDIT", "JUMLAH_BARIS", "TOTAL_NILAI_PPN"]);
+            
+            let sumCount = 0; let sumPPN = 0;
+            
+            order.forEach(st => {
+                if(sumObj[st] || (st.includes('MISSING_') && title.includes(st.split('_')[1]))) {
+                    const s = sumObj[st] || { count: 0, total: 0 };
+                    aoa.push([st, s.count, Number(s.total.toFixed(2))]);
+                    sumCount += s.count; sumPPN += s.total;
+                }
+            });
+
+            Object.keys(sumObj).forEach(st => {
+                if(!order.includes(st)) {
+                    aoa.push([st, sumObj[st].count, Number(sumObj[st].total.toFixed(2))]);
+                    sumCount += sumObj[st].count; sumPPN += sumObj[st].total;
+                }
+            });
+
+            aoa.push([]); 
+            aoa.push([`TOTAL ${title}`, sumCount, Number(sumPPN.toFixed(2))]);
+            aoa.push(["TOTAL ORIGINAL FILE", totalOrigCount, Number(totalOrigPPN.toFixed(2))]);
+            aoa.push(["SELISIH BALANCING", Math.abs(totalOrigCount - sumCount), Number((totalOrigPPN - sumPPN).toFixed(2))]);
+            
+            return aoa;
+        }
+
+        function applyMainStyling(ws, data, appendedColNames) {
             if (!data.length) return;
             const keys = Object.keys(data[0]); const range = XLSX.utils.decode_range(ws['!ref']);
             const appendedIndices = appendedColNames.map(name => keys.indexOf(name)).filter(idx => idx !== -1);
             const statusIdx = keys.indexOf('STATUS_AUDIT');
 
-            for (let R = range.s.r; R <= range.e.r; ++R) {
+            for (let R = range.s.r; R <= Math.min(range.e.r, data.length); ++R) {
                 let rowStatus = "";
                 if (R > 0 && statusIdx !== -1) {
                     const stCell = ws[XLSX.utils.encode_cell({c: statusIdx, r: R})];
                     rowStatus = stCell ? stCell.v : "";
                 }
-                for (let C = range.s.c; C <= range.e.c; ++C) {
+                for (let C = range.s.c; C < keys.length; ++C) {
                     const cellRef = XLSX.utils.encode_cell({c: C, r: R});
                     if (!ws[cellRef]) continue;
                     if (!ws[cellRef].s) ws[cellRef].s = {};
                     const isAppended = appendedIndices.includes(C);
+                    
+                    // Ini yang membuat format angka jadi rapi di Excel tanpa mengubah valuenya.
                     if (typeof ws[cellRef].v === 'number') ws[cellRef].z = '#,##0';
 
                     if (R === 0) {
@@ -808,15 +963,61 @@
                     }
                 }
             }
-            ws['!views'] = [{ state: "frozen", ySplit: 1 }]; ws['!autofilter'] = { ref: ws['!ref'] };
+            ws['!views'] = [{ state: "frozen", ySplit: 1 }]; ws['!autofilter'] = { ref: XLSX.utils.encode_range({s:{r:0,c:0},e:{r:data.length, c:keys.length-1}}) };
         }
 
-        // --- EXTREME LOAD TEST DATA GENERATOR ---
+        function applySummaryStyling(ws, startCol, totalRows) {
+            for (let r = 0; r < totalRows; r++) {
+                for (let c = startCol; c <= startCol + 2; c++) {
+                    const cellRef = XLSX.utils.encode_cell({c: c, r: r});
+                    if (!ws[cellRef]) continue;
+                    if (!ws[cellRef].s) ws[cellRef].s = {};
+                    
+                    if (typeof ws[cellRef].v === 'number') ws[cellRef].z = '#,##0';
+
+                    if (r === 0) {
+                        ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FF1E293B" } };
+                        ws[cellRef].s.font = { color: { rgb: "FFFFFFFF" }, bold: true, sz: 12 };
+                    } 
+                    else if (r === 1) {
+                        ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FF334155" } };
+                        ws[cellRef].s.font = { color: { rgb: "FFFFFFFF" }, bold: true };
+                        ws[cellRef].s.border = { bottom: { style: "medium", color: { rgb: "FF000000" } } };
+                    }
+                    else if (r > 1 && r < totalRows - 3) {
+                        const statusCell = ws[XLSX.utils.encode_cell({c: startCol, r: r})];
+                        const st = statusCell ? statusCell.v : "";
+                        ws[cellRef].s.border = { bottom: { style: "thin", color: { rgb: "FFDDDDDD" } }, left: { style: "thin", color: { rgb: "FFDDDDDD" } }, right: { style: "thin", color: { rgb: "FFDDDDDD" } } };
+                        
+                        if (c === startCol) {
+                            if(st.includes('MATCH') && !st.includes('MISMATCH')) { ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFC6EFCE" } }; ws[cellRef].s.font = { color: { rgb: "FF006100" }, bold: true }; }
+                            else if(st === 'AMOUNT_MISMATCH') { ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFFFC7CE" } }; ws[cellRef].s.font = { color: { rgb: "FF9C0006" }, bold: true }; }
+                            else if(st.includes('MISSING')) { ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFF2F2F2" } }; ws[cellRef].s.font = { color: { rgb: "FF595959" }, bold: true }; }
+                            else if(st === 'DUPLICATE_CONFIRMED') { ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFFFEB9C" } }; ws[cellRef].s.font = { color: { rgb: "FF9C6500" }, bold: true }; }
+                            else if(st === 'EXCLUDED_RETUR') { ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFE4DFEC" } }; ws[cellRef].s.font = { color: { rgb: "FF60497A" }, bold: true }; }
+                        }
+                    }
+                    else if (r >= totalRows - 3) {
+                        ws[cellRef].s.font = { bold: true };
+                        if (r === totalRows - 3 || r === totalRows - 2) {
+                            ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFDBEAFE" } }; 
+                            if (r === totalRows - 3) ws[cellRef].s.border = { top: { style: "double", color: { rgb: "FF000000" } } };
+                        }
+                        if (r === totalRows - 1) { 
+                            const isZero = ws[XLSX.utils.encode_cell({c: startCol + 2, r: r})].v === 0;
+                            ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: isZero ? "FFC6EFCE" : "FFFFC7CE" } };
+                            ws[cellRef].s.font = { color: { rgb: isZero ? "FF006100" : "FF9C0006" }, bold: true };
+                        }
+                    }
+                }
+            }
+        }
+
         document.getElementById('btnLoadDummy').addEventListener('click', () => {
             const erp = [], djp = [];
-            const MULTIPLIER = 10; // Will generate 30,000+ data for test. Change this to test larger datasets.
+            const MULTIPLIER = 10; 
 
-            writeLog(`Meng-generate ${MULTIPLIER * 3000} dummy data... harap tunggu.`);
+            writeLog(`Meng-generate ${MULTIPLIER * 3000} dummy data berkinerja tinggi... harap tunggu.`);
             
             setTimeout(() => {
                 for (let m = 0; m < MULTIPLIER; m++) {
@@ -831,22 +1032,28 @@
                         erp.push({ "No. Bukti": `JRN-T${m}-${i}`, "Invoice Asli": inv, "Nominal PPN": 500000, "Keterangan": "Sales Tol" });
                         djp.push({ "Tanggal": "2026-05-11", "Nomor Faktur": inv, "Nominal VAT": 500003, "Lawan Transaksi": "PT Tolerance" }); 
                     }
-                    for (let i = 1; i <= 50; i++) {
-                        const base = 30000000 + offset + i; const invERP = `010.000.25.${base}`;
-                        const invDJP = `010-000-25-${base}`; const invDjpTypo = `010.000.25.${base.toString().replace('0','O')}`;
-                        erp.push({ "No. Bukti": `JRN-F${m}-${i}`, "Invoice Asli": invERP, "Nominal PPN": 750000, "Keterangan": "Sales Fuzzy" });
-                        djp.push({ "Tanggal": "2026-05-12", "Nomor Faktur": (i%2===0 ? invDJP : invDjpTypo), "Nominal VAT": 750000, "Lawan Transaksi": "PT Fuzzy" });
+                    for (let i = 1; i <= 10; i++) {
+                        const inv = `010.000.25.${(40000000 + offset + i)}`;
+                        erp.push({ "No. Bukti": `JRN-M${m}-${i}`, "Invoice Asli": inv, "Nominal PPN": 1000000, "Keterangan": "Mismatch" });
+                        djp.push({ "Tanggal": "2026-05-12", "Nomor Faktur": inv, "Nominal VAT": 1500000, "Lawan Transaksi": "PT Mismatch" });
+                    }
+                    for (let i = 1; i <= 5; i++) {
+                        const inv = `010.000.25.${(50000000 + offset + i)}`;
+                        erp.push({ "No. Bukti": `JRN-D1-${m}-${i}`, "Invoice Asli": inv, "Nominal PPN": 250000, "Keterangan": "Original" });
+                        erp.push({ "No. Bukti": `JRN-D2-${m}-${i}`, "Invoice Asli": inv, "Nominal PPN": 250000, "Keterangan": "Double 1" });
+                        erp.push({ "No. Bukti": `JRN-D3-${m}-${i}`, "Invoice Asli": inv, "Nominal PPN": 250000, "Keterangan": "Double 2" });
+                        djp.push({ "Tanggal": "2026-05-13", "Nomor Faktur": inv, "Nominal VAT": 250000, "Lawan Transaksi": "PT Duplicate" });
                     }
                 }
 
                 rawErpData = erp; erpColumns = Object.keys(erp[0]);
                 rawDjpData = djp; djpColumns = Object.keys(djp[0]);
 
-                document.getElementById('nameERP').textContent = "ERP_Dataset_Audit.xlsx"; document.getElementById('rowsERP').textContent = `${erp.length.toLocaleString()} Baris`; document.getElementById('statusERP').classList.remove('hidden');
-                document.getElementById('nameDJP').textContent = "DJP_Dataset_Audit.xlsx"; document.getElementById('rowsDJP').textContent = `${djp.length.toLocaleString()} Baris`; document.getElementById('statusDJP').classList.remove('hidden');
+                document.getElementById('nameERP').textContent = "ERP_Dataset_Audit.xlsx"; document.getElementById('rowsERP').textContent = `${erp.length.toLocaleString('id-ID')} Baris`; document.getElementById('statusERP').classList.remove('hidden');
+                document.getElementById('nameDJP').textContent = "DJP_Dataset_Audit.xlsx"; document.getElementById('rowsDJP').textContent = `${djp.length.toLocaleString('id-ID')} Baris`; document.getElementById('statusDJP').classList.remove('hidden');
 
                 initMapping();
-                showNotif(`Sukses generate ${erp.length.toLocaleString()} baris data dummy.`, "info");
+                showNotif(`Sukses generate ${erp.length.toLocaleString('id-ID')} baris data.`, "info");
             }, 100);
         });
     </script>
