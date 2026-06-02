@@ -79,9 +79,9 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">Enterprise Tax Audit Engine</h1>
-                        <span class="px-2 py-0.5 text-[10px] font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20 rounded-full uppercase tracking-wider">V4 Auto-Balance</span>
+                        <span class="px-2 py-0.5 text-[10px] font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20 rounded-full uppercase tracking-wider">V3 Auto-Balance</span>
                     </div>
-                    <p class="text-xs text-slate-400">Ultra-Fast Engine, Full Frequency Duplicate Check & Precision Float Fix.</p>
+                    <p class="text-xs text-slate-400">Ultra-Fast Engine, Full Frequency Duplicate Check & Single-Pass Aggregation.</p>
                 </div>
             </div>
             
@@ -276,27 +276,22 @@
 
     </main>
 
-    <!-- INLINE WEB WORKER -->
+    <!-- INLINE WEB WORKER (V3: Single-Pass Aggregation & Full Freq Duplicate Engine) -->
     <script id="recon-worker" type="javascript/worker">
         self.onmessage = function(e) {
             const { erpRaw, djpRaw, erpMap, djpMap, tolerance = 10 } = e.data;
             
             function cleanNum(val) {
-                if (val === null || val === undefined || val === '') return 0;
-                let num = 0;
-                if (typeof val === 'number') {
-                    num = val;
-                } else {
-                    let clean = String(val).replace(/Rp/gi, "").replace(/\s/g, "");
-                    const dotIdx = clean.lastIndexOf('.');
-                    const commaIdx = clean.lastIndexOf(',');
-                    if (commaIdx > dotIdx) clean = clean.replace(/\./g, "").replace(/,/g, ".");
-                    else if (dotIdx > commaIdx) clean = clean.replace(/,/g, "");
-                    else clean = clean.replace(/,/g, "");
-                    num = parseFloat(clean);
-                    if (isNaN(num)) return 0;
-                }
-                return Number(num.toFixed(2));
+                if (!val) return 0;
+                if (typeof val === 'number') return val;
+                let clean = String(val).replace(/Rp/gi, "").replace(/\s/g, "");
+                const dotIdx = clean.lastIndexOf('.');
+                const commaIdx = clean.lastIndexOf(',');
+                if (commaIdx > dotIdx) clean = clean.replace(/\./g, "").replace(/,/g, ".");
+                else if (dotIdx > commaIdx) clean = clean.replace(/,/g, "");
+                else clean = clean.replace(/,/g, "");
+                const num = parseFloat(clean);
+                return isNaN(num) ? 0 : num;
             }
 
             function normalizeInvoice(inv) {
@@ -370,15 +365,21 @@
                 };
             });
 
+            // ==========================================
+            // MODULE 4: V2 DUPLICATE ENGINE (FREQUENCY MAP)
+            // Mendeteksi SEMUA data yang identik, bukan hanya yang terakhir.
+            // ==========================================
             self.postMessage({ type: 'status', msg: 'Membangun Hash Map & Deteksi Semua Duplikasi...', pct: 15 });
 
             function flagAllDuplicates(dataset, side) {
                 const freq = new Map();
+                // Pass 1: Hitung kemunculan
                 dataset.forEach(item => {
                     if(item.isRetur) return;
                     const key = `${item.cleanInv}_${item.ppn}`;
                     freq.set(key, (freq.get(key) || 0) + 1);
                 });
+                // Pass 2: Flag semuanya yang muncul lebih dari 1x
                 dataset.forEach(item => {
                     if(item.isRetur) return;
                     const key = `${item.cleanInv}_${item.ppn}`;
@@ -393,6 +394,7 @@
             flagAllDuplicates(erpData, 'ERP');
             flagAllDuplicates(djpData, 'DJP');
 
+            // --- BUILD DJP INDEXES ---
             const djpExactMap = new Map(); 
             const djpKey8Map = new Map();  
             const djpAmountMap = new Map(); 
@@ -420,6 +422,9 @@
 
             self.postMessage({ type: 'status', msg: 'Melakukan Indexed Matching O(1)...', pct: 30 });
 
+            // ==========================================
+            // MODULE 5: ULTRA-FAST MATCHING ENGINE
+            // ==========================================
             const totalErp = erpData.length;
 
             function getFirstUnmatched(map, key) {
@@ -445,12 +450,14 @@
                 let match = null;
                 const erpPpnInt = Math.round(erp.ppn);
 
+                // LAYER 1: O(1) EXACT MATCH
                 match = getFirstUnmatched(djpExactMap, `${erp.cleanInv}_${erp.ppn}`);
                 if (match) {
                     erp.status = 'EXACT_MATCH'; erp.reason = 'Nomor faktur dan nominal PPN identik (100%)';
                     erp.confidence = 100;
                 }
 
+                // LAYER 2: TOLERANCE AMOUNT 
                 if (!match) {
                     const candidates = djpCleanInvMap.get(erp.cleanInv);
                     if (candidates) {
@@ -465,6 +472,7 @@
                     }
                 }
 
+                // LAYER 3 & 4: 8-DIGIT KEY (Exact & Tolerance)
                 if (!match && erp.key8.length >= 8) {
                     const candidates = djpKey8Map.get(erp.key8);
                     if (candidates) {
@@ -483,6 +491,7 @@
                     }
                 }
 
+                // LAYER 5: O(k) FUZZY MATCHING
                 if (!match) {
                     let bestFuzzyMatch = null, bestScore = 0;
                     for(let t = -tolerance; t <= tolerance; t++) {
@@ -507,6 +516,7 @@
                     }
                 }
 
+                // LAYER 6: AMOUNT MISMATCH
                 if (!match) {
                     let mismatchCand = getFirstUnmatched(djpCleanInvMap, erp.cleanInv);
                     if (!mismatchCand && erp.key8.length >= 8) mismatchCand = getFirstUnmatched(djpKey8Map, erp.key8);
@@ -518,6 +528,7 @@
                     }
                 }
 
+                // LAYER 7: MISSING A2
                 if (!match) {
                     erp.status = 'MISSING_A2';
                     erp.reason = 'Tidak ditemukan kecocokan faktur maupun nominal di data A2.';
@@ -533,6 +544,7 @@
 
             self.postMessage({ type: 'status', msg: 'Single-Pass Aggregation & Formatting Output...', pct: 95 });
 
+            // Sisa DJP
             djpData.forEach(djp => {
                 if (djp.isRetur) { djp.status = 'EXCLUDED_RETUR'; djp.reason = 'Transaksi diidentifikasi sebagai retur.'; }
                 else if (!djp.isMatched && djp.status !== 'DUPLICATE_CONFIRMED' && !djp.matchedWith) {
@@ -541,46 +553,9 @@
                 }
             });
 
-            // --- SMART SANITIZER UNTUK OUTPUT (Pembersih Desimal Aman) ---
-            const sanitizeOriginalData = (orig) => {
-                const sanitized = {};
-                for (let key in orig) {
-                    let v = orig[key];
-                    if (typeof v === 'number') {
-                        sanitized[key] = Number(v.toFixed(2));
-                    } else if (typeof v === 'string') {
-                        let trimmed = String(v).trim();
-                        if (!trimmed) {
-                            sanitized[key] = v;
-                            continue;
-                        }
-                        
-                        // Deteksi murni format float "123.45" atau "123,45"
-                        let isStrictFloat = /^-?\d+[\.,]\d+$/.test(trimmed);
-                        // Deteksi murni format int "123"
-                        let isStrictInt = /^-?\d+$/.test(trimmed);
-                        
-                        let intPart = trimmed.split(/[\.,]/)[0].replace('-', '');
-                        // Jangan konversi jika diawali angka 0 (melindungi faktur/telepon)
-                        let isLeadingZero = intPart.length > 1 && intPart.startsWith('0');
-                        // Jangan konversi jika terlalu panjang (melindungi NIK/NPWP/ID >= 15 digit)
-                        let isTooLong = intPart.length > 14; 
-                        // Jangan konversi jika formatnya identik dengan YYYYMMDD (tanggal eksport)
-                        let isPossibleDate = trimmed.length === 8 && (trimmed.startsWith('20') || trimmed.startsWith('19'));
-
-                        if ((isStrictFloat || isStrictInt) && !isLeadingZero && !isTooLong && !isPossibleDate) {
-                            let normalized = trimmed.replace(',', '.');
-                            sanitized[key] = Number(parseFloat(normalized).toFixed(2));
-                        } else {
-                            sanitized[key] = v; // Biarkan sebagai String aslinya
-                        }
-                    } else {
-                        sanitized[key] = v;
-                    }
-                }
-                return sanitized;
-            };
-
+            // ==========================================
+            // SINGLE PASS AGGREGATION FOR SUMMARY
+            // ==========================================
             const summaryERP = {};
             const summaryA2 = {};
             let cMatch=0, cFuzzy=0, cSelisihMismatch=0, cDupPpn=0, cReturPpn=0;
@@ -589,7 +564,7 @@
                 const st = i.status || 'UNMAPPED';
                 if(!summaryERP[st]) summaryERP[st] = { count: 0, total: 0 };
                 summaryERP[st].count += 1;
-                summaryERP[st].total += i.ppn;
+                summaryERP[st].total += i.ppn; // Add original PPN for accurate balancing
 
                 if(st.includes('MATCH') && !st.includes('MISMATCH')) cMatch++;
                 if(st === 'FUZZY_MATCH') cFuzzy++;
@@ -597,16 +572,13 @@
                 if(st === 'DUPLICATE_CONFIRMED') cDupPpn += i.ppn;
                 if(st === 'EXCLUDED_RETUR') cReturPpn += i.ppn;
 
-                // Terapkan fungsi sanitize yang AMAN
-                const sanitizedOriginal = sanitizeOriginalData(i.original);
-
                 const append = {
                     CLEAN_INVOICE: i.cleanInv, KEY_8_DIGIT: i.key8,
-                    VAT_A2: i.matchedWith ? Number(i.matchedWith.ppn.toFixed(2)) : 0,
-                    STATUS_AUDIT: st, SELISIH_PPN: Number(i.selisih.toFixed(2)),
+                    VAT_A2: i.matchedWith ? i.matchedWith.ppn : 0,
+                    STATUS_AUDIT: st, SELISIH_PPN: i.selisih,
                     CONFIDENCE: i.confidence + '%', AUDIT_REASON: i.reason
                 };
-                return Object.assign({}, sanitizedOriginal, append);
+                return Object.assign({}, i.original, append);
             });
 
             const finalSheet2 = djpData.map(i => {
@@ -615,15 +587,13 @@
                 summaryA2[st].count += 1;
                 summaryA2[st].total += i.ppn;
 
-                const sanitizedOriginal = sanitizeOriginalData(i.original);
-
                 const append = {
                     CLEAN_INVOICE: i.cleanInv, KEY_8_DIGIT: i.key8,
-                    PPN_ERP: i.matchedWith ? Number(i.matchedWith.ppn.toFixed(2)) : 0,
-                    STATUS_AUDIT: st, SELISIH_PPN: Number(i.selisih.toFixed(2)),
+                    PPN_ERP: i.matchedWith ? i.matchedWith.ppn : 0,
+                    STATUS_AUDIT: st, SELISIH_PPN: i.selisih,
                     CONFIDENCE: i.confidence + '%', AUDIT_REASON: i.reason
                 };
-                return Object.assign({}, sanitizedOriginal, append);
+                return Object.assign({}, i.original, append);
             });
 
             self.postMessage({
@@ -632,13 +602,8 @@
                 sheet2Rows: finalSheet2,
                 summaryERP, summaryA2,
                 metrics: { 
-                    totalPpnErp: Number(totalPpnErp.toFixed(2)), 
-                    totalVatA2: Number(totalVatA2.toFixed(2)), 
-                    totalErp,
-                    cMatch, cFuzzy, 
-                    cSelisihMismatch: Number(cSelisihMismatch.toFixed(2)), 
-                    cDupPpn: Number(cDupPpn.toFixed(2)), 
-                    cReturPpn: Number(cReturPpn.toFixed(2))
+                    totalPpnErp, totalVatA2, totalErp,
+                    cMatch, cFuzzy, cSelisihMismatch, cDupPpn, cReturPpn
                 }
             });
         };
@@ -785,9 +750,11 @@
             };
         });
 
+        // Optimasi: Gunakan DocumentFragment untuk Render Table
         const renderDashboard = () => {
             const m = finalMetrics;
             
+            // Format KPI Utama
             document.getElementById('kpiTotalErp').textContent = `Rp ${m.totalPpnErp.toLocaleString('id-ID')}`;
             document.getElementById('kpiTotalA2').textContent = `Rp ${m.totalVatA2.toLocaleString('id-ID')}`;
             
@@ -801,19 +768,21 @@
             const diffCount = Math.abs(m.totalErp - sumErpCount);
             const diffSum = Math.abs(m.totalPpnErp - sumErpTotal);
             
-            if (diffCount === 0 && diffSum < 1) {
+            if (diffCount === 0 && diffSum < 1) { // Balance!
                 balanceBadge.innerHTML = `<i class="fa-solid fa-scale-balanced text-emerald-400"></i><span class="text-xs text-emerald-400 font-bold">BALANCED (SELISIH 0)</span>`;
             } else {
                 balanceBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-400"></i><span class="text-xs text-rose-400 font-bold">TIDAK BALANCE</span>`;
                 showNotif("Peringatan: Total Summary tidak balance dengan File Asli!", "warning");
             }
 
+            // Stats Bawah
             document.getElementById('statMatched').innerHTML = `${m.cMatch.toLocaleString('id-ID')} <span class="text-[10px] text-slate-400 ml-1">(${((m.cMatch/m.totalErp)*100).toFixed(2)}%)</span>`;
             document.getElementById('statFuzzy').textContent = m.cFuzzy.toLocaleString('id-ID');
             document.getElementById('statSelisih').textContent = `Rp ${m.cSelisihMismatch.toLocaleString('id-ID')}`;
             document.getElementById('statDuplicate').textContent = `Rp ${m.cDupPpn.toLocaleString('id-ID')}`;
             document.getElementById('statRetur').textContent = `Rp ${m.cReturPpn.toLocaleString('id-ID')}`;
 
+            // Batch Render Table dengan fragment
             const tbody = document.getElementById('tableBodyPreview');
             tbody.innerHTML = '';
             const fragment = document.createDocumentFragment();
@@ -821,6 +790,7 @@
             const erpInv = document.getElementById('mapErpInvoice').value;
             const erpPpn = document.getElementById('mapErpPpn').value;
 
+            // Render maks 100 untuk performa tinggi
             finalReportDataERP.slice(0, 100).forEach((row, i) => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-900/50";
@@ -890,12 +860,13 @@
                 XLSX.utils.book_append_sheet(wb, ws1, "ERP_RECON_RESULT");
                 XLSX.utils.book_append_sheet(wb, ws2, "DJP_A2_RECON_RESULT");
 
-                XLSX.writeFile(wb, `Enterprise_Tax_Recon_V4_${new Date().toISOString().slice(0,10)}.xlsx`);
-                showNotif("Sukses Ekspor Laporan dengan Angka Bersih!", "success");
+                XLSX.writeFile(wb, `Enterprise_Tax_Recon_V3_${new Date().toISOString().slice(0,10)}.xlsx`);
+                showNotif("Sukses Ekspor Laporan dengan Summary!", "success");
             } catch (err) { showNotif("Gagal mengekspor file.", "error"); writeLog(`Error export: ${err.message}`, "error"); }
         });
 
         function generateSummaryAOA(title, sumObj, totalOrigPPN, totalOrigCount) {
+            const sanitizeNum = (val) => parseFloat(Number(val).toFixed(2));
             const order = ['EXACT_MATCH', 'MATCH_WITH_TOLERANCE', 'PARTIAL_KEY_MATCH', 'PARTIAL_TOLERANCE_MATCH', 'FUZZY_MATCH', 'AMOUNT_MISMATCH', 'DUPLICATE_CONFIRMED', 'EXCLUDED_RETUR', 'MISSING_A2', 'MISSING_ERP'];
             const aoa = [];
             aoa.push([title, "", ""]);
@@ -906,22 +877,22 @@
             order.forEach(st => {
                 if(sumObj[st] || (st.includes('MISSING_') && title.includes(st.split('_')[1]))) {
                     const s = sumObj[st] || { count: 0, total: 0 };
-                    aoa.push([st, s.count, Number(s.total.toFixed(2))]);
+                    aoa.push([st, s.count, sanitizeNum(s.total)]);
                     sumCount += s.count; sumPPN += s.total;
                 }
             });
 
             Object.keys(sumObj).forEach(st => {
                 if(!order.includes(st)) {
-                    aoa.push([st, sumObj[st].count, Number(sumObj[st].total.toFixed(2))]);
+                    aoa.push([st, sumObj[st].count, sanitizeNum(sumObj[st].total)]);
                     sumCount += sumObj[st].count; sumPPN += sumObj[st].total;
                 }
             });
 
             aoa.push([]); 
-            aoa.push([`TOTAL ${title}`, sumCount, Number(sumPPN.toFixed(2))]);
-            aoa.push(["TOTAL ORIGINAL FILE", totalOrigCount, Number(totalOrigPPN.toFixed(2))]);
-            aoa.push(["SELISIH BALANCING", Math.abs(totalOrigCount - sumCount), Number((totalOrigPPN - sumPPN).toFixed(2))]);
+            aoa.push([`TOTAL ${title}`, sumCount, sanitizeNum(sumPPN)]);
+            aoa.push(["TOTAL ORIGINAL FILE", totalOrigCount, sanitizeNum(totalOrigPPN)]);
+            aoa.push(["SELISIH BALANCING", Math.abs(totalOrigCount - sumCount), sanitizeNum(totalOrigPPN - sumPPN)]);
             
             return aoa;
         }
@@ -931,7 +902,10 @@
             const keys = Object.keys(data[0]); const range = XLSX.utils.decode_range(ws['!ref']);
             const appendedIndices = appendedColNames.map(name => keys.indexOf(name)).filter(idx => idx !== -1);
             const statusIdx = keys.indexOf('STATUS_AUDIT');
+            const key8Idx = keys.indexOf('KEY_8_DIGIT');
+            const cleanInvIdx = keys.indexOf('CLEAN_INVOICE');
 
+            // Limit styling range strictly to original data area to avoid overriding summary
             for (let R = range.s.r; R <= Math.min(range.e.r, data.length); ++R) {
                 let rowStatus = "";
                 if (R > 0 && statusIdx !== -1) {
@@ -944,8 +918,15 @@
                     if (!ws[cellRef].s) ws[cellRef].s = {};
                     const isAppended = appendedIndices.includes(C);
                     
-                    // Ini yang membuat format angka jadi rapi di Excel tanpa mengubah valuenya.
-                    if (typeof ws[cellRef].v === 'number') ws[cellRef].z = '#,##0';
+                    // FIX: Jangan berikan format nominal uang (koma/ribuan) pada kolom ID Faktur
+                    if (C === key8Idx || C === cleanInvIdx) {
+                        if (R > 0) {
+                            ws[cellRef].t = 's'; // Force type menjadi text/string
+                            ws[cellRef].v = String(ws[cellRef].v);
+                        }
+                    } else if (typeof ws[cellRef].v === 'number') {
+                        ws[cellRef].z = '#,##0';
+                    }
 
                     if (R === 0) {
                         ws[cellRef].s.font = { bold: true, color: { rgb: "FF000000" } };
@@ -966,6 +947,7 @@
             ws['!views'] = [{ state: "frozen", ySplit: 1 }]; ws['!autofilter'] = { ref: XLSX.utils.encode_range({s:{r:0,c:0},e:{r:data.length, c:keys.length-1}}) };
         }
 
+        // Style the Summary Section
         function applySummaryStyling(ws, startCol, totalRows) {
             for (let r = 0; r < totalRows; r++) {
                 for (let c = startCol; c <= startCol + 2; c++) {
@@ -975,21 +957,24 @@
                     
                     if (typeof ws[cellRef].v === 'number') ws[cellRef].z = '#,##0';
 
+                    // Top Header Title (Biru Gelap Enterprise)
                     if (r === 0) {
                         ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FF1E293B" } };
                         ws[cellRef].s.font = { color: { rgb: "FFFFFFFF" }, bold: true, sz: 12 };
                     } 
+                    // Sub Header (Status, Jumlah, Total)
                     else if (r === 1) {
                         ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FF334155" } };
                         ws[cellRef].s.font = { color: { rgb: "FFFFFFFF" }, bold: true };
                         ws[cellRef].s.border = { bottom: { style: "medium", color: { rgb: "FF000000" } } };
                     }
+                    // Data Rows Styling
                     else if (r > 1 && r < totalRows - 3) {
                         const statusCell = ws[XLSX.utils.encode_cell({c: startCol, r: r})];
                         const st = statusCell ? statusCell.v : "";
                         ws[cellRef].s.border = { bottom: { style: "thin", color: { rgb: "FFDDDDDD" } }, left: { style: "thin", color: { rgb: "FFDDDDDD" } }, right: { style: "thin", color: { rgb: "FFDDDDDD" } } };
                         
-                        if (c === startCol) {
+                        if (c === startCol) { // Color the status name
                             if(st.includes('MATCH') && !st.includes('MISMATCH')) { ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFC6EFCE" } }; ws[cellRef].s.font = { color: { rgb: "FF006100" }, bold: true }; }
                             else if(st === 'AMOUNT_MISMATCH') { ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFFFC7CE" } }; ws[cellRef].s.font = { color: { rgb: "FF9C0006" }, bold: true }; }
                             else if(st.includes('MISSING')) { ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFF2F2F2" } }; ws[cellRef].s.font = { color: { rgb: "FF595959" }, bold: true }; }
@@ -997,13 +982,14 @@
                             else if(st === 'EXCLUDED_RETUR') { ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFE4DFEC" } }; ws[cellRef].s.font = { color: { rgb: "FF60497A" }, bold: true }; }
                         }
                     }
+                    // Total & Selisih Rows
                     else if (r >= totalRows - 3) {
                         ws[cellRef].s.font = { bold: true };
                         if (r === totalRows - 3 || r === totalRows - 2) {
-                            ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFDBEAFE" } }; 
+                            ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: "FFDBEAFE" } }; // Light blue for totals
                             if (r === totalRows - 3) ws[cellRef].s.border = { top: { style: "double", color: { rgb: "FF000000" } } };
                         }
-                        if (r === totalRows - 1) { 
+                        if (r === totalRows - 1) { // Selisih
                             const isZero = ws[XLSX.utils.encode_cell({c: startCol + 2, r: r})].v === 0;
                             ws[cellRef].s.fill = { patternType: "solid", fgColor: { rgb: isZero ? "FFC6EFCE" : "FFFFC7CE" } };
                             ws[cellRef].s.font = { color: { rgb: isZero ? "FF006100" : "FF9C0006" }, bold: true };
@@ -1013,9 +999,10 @@
             }
         }
 
+        // --- STRESS TEST DATA GENERATOR ---
         document.getElementById('btnLoadDummy').addEventListener('click', () => {
             const erp = [], djp = [];
-            const MULTIPLIER = 10; 
+            const MULTIPLIER = 10; // Akan menghasilkan 30.000+ baris.
 
             writeLog(`Meng-generate ${MULTIPLIER * 3000} dummy data berkinerja tinggi... harap tunggu.`);
             
@@ -1027,16 +1014,19 @@
                         erp.push({ "No. Bukti": `JRN-${m}-${i}`, "Invoice Asli": inv, "Nominal PPN": ppn, "Keterangan": "Sales" });
                         djp.push({ "Tanggal": "2026-05-10", "Nomor Faktur": inv, "Nominal VAT": ppn, "Lawan Transaksi": "PT Budi" });
                     }
+                    // Toleransi
                     for (let i = 1; i <= 50; i++) {
                         const inv = `010.000.25.${(20000000 + offset + i)}`;
                         erp.push({ "No. Bukti": `JRN-T${m}-${i}`, "Invoice Asli": inv, "Nominal PPN": 500000, "Keterangan": "Sales Tol" });
                         djp.push({ "Tanggal": "2026-05-11", "Nomor Faktur": inv, "Nominal VAT": 500003, "Lawan Transaksi": "PT Tolerance" }); 
                     }
+                    // Mismatch (Untuk tes selisih)
                     for (let i = 1; i <= 10; i++) {
                         const inv = `010.000.25.${(40000000 + offset + i)}`;
                         erp.push({ "No. Bukti": `JRN-M${m}-${i}`, "Invoice Asli": inv, "Nominal PPN": 1000000, "Keterangan": "Mismatch" });
                         djp.push({ "Tanggal": "2026-05-12", "Nomor Faktur": inv, "Nominal VAT": 1500000, "Lawan Transaksi": "PT Mismatch" });
                     }
+                    // Test Duplicate (3 items identical)
                     for (let i = 1; i <= 5; i++) {
                         const inv = `010.000.25.${(50000000 + offset + i)}`;
                         erp.push({ "No. Bukti": `JRN-D1-${m}-${i}`, "Invoice Asli": inv, "Nominal PPN": 250000, "Keterangan": "Original" });
